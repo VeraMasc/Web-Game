@@ -1,0 +1,17 @@
+//Styling for all ui elements
+
+//Contains the canvas and menu elements
+#screenContainer{
+    display: flex;
+    flex-direction: row;
+}
+
+.sideMenu{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap:1em;
+    padding: 1em;
+    max-width: 30%;
+    
+}

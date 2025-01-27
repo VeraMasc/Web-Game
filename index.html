@@ -9,8 +9,14 @@
     <title>melonJS TypeScript Vite boilerplate</title>
   </head>
   <body>
-      <!-- Canvas placeholder -->
-      <div id="screen"></div>
+      <div id="screenContainer">
+        <div class="sideMenu">
+          <input type="button" value="Actions">
+          <input type="button" value="Stats">
+          <input type="button" value="Config">
+        </div>
+        <div id="screen"></div>
+      </div>
       <script type="module" src="src/index.ts"></script>
   </body>
 </html>

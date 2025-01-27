@@ -3,6 +3,13 @@ import vitePluginFaviconsInject from "vite-plugin-favicons-inject";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig({
+  css:{
+    preprocessorOptions:{
+      scss:{
+        api:'modern-compiler'
+      }
+    }
+  },
   base: "",
   build: {
     assetsDir: "assets",
