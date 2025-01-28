@@ -1,6 +1,7 @@
 import { Stage, game, ColorLayer, BitmapText  } from "melonjs";
 import { EventLog, LogEntry } from "../eventLog";
 import {createRoot} from "react-dom/client"
+import { Controller } from "../controller";
 
 
 class PlayScreen extends Stage {
@@ -21,12 +22,14 @@ class PlayScreen extends Stage {
             text : "Hello World !"
         }));
 
+        new Controller();
+
         let log= document.getElementById("eventLog");
         if(log!=null){
             let root = createRoot(log);
             let entries = new EventLog();
             for(let i=0;i<4;i++){
-                entries.entries.push(new LogEntry(`Entry ${i}`))
+                entries.entries.push(new LogEntry(`Entry test ${i}`))
             }
             
             

@@ -13,9 +13,15 @@ export class EventLog {
 
 /**Entry of the log*/
 export class LogEntry {
-    
-    constructor(public text:string,public title:string=""){
+    /**Unique ID of the log */
+    logId;
 
+    /**
+     * @param text Text of the entry
+     * @param title Title of the entry (describes the type of entry)
+     */
+    constructor(public text:string,public title:string=""){
+        this.logId=crypto.randomUUID();
     }
 
     toString():string {
@@ -23,7 +29,7 @@ export class LogEntry {
     }
 
     toHtml() {
-        return <p className="LogEntry"><span className="LogTitle">Test: </span>{this.text}</p>
+        return <p className="LogEntry" key={this.logId}><span className="LogTitle">Test: </span>{this.text}</p>
     }
 
 }
