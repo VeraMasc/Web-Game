@@ -1,12 +1,39 @@
-import React from "react"
+import React, {useState} from "react"
 
 /**Handles the log history of events */
-export class EventLog {
-    /**List of all the entries */
-    entries:LogEntry[]= [];
+export class EventLog extends React.Component {
+    /**React state of the component */
+    state: Readonly<{entries:LogEntry[]}>={
+        entries: []
+    };
+
+    /**List of all the entries*/
+    entries:LogEntry[];
+
+    constructor(props={}){
+        super(props)
+                console.log(this);
+    }
+
+
+    /**Adds a new entry to the log */
+    add = (entry:LogEntry)=>{
+        //Set the new state
+        this.setState((prevState:Readonly<any>) => {
+            return {entries:[...prevState.entries,entry]}
+        }); 
+    }
+
+    render() {
+        return this.toHtml();
+      }
 
     toHtml() {
-        return this.entries.map(e => e.toHtml())
+        for(let e of this.state.entries){
+            console.log(`Entry: ${e}`);
+        }
+       
+        return this.state.entries.map(e => e.toHtml())
     }
 
 }
