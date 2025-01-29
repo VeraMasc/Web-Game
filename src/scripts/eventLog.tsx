@@ -10,9 +10,13 @@ export class EventLog extends React.Component {
     /**List of all the entries*/
     entries:LogEntry[];
 
+    /**Singleton pattern */
+    static instance;
+
     constructor(props={}){
         super(props)
                 console.log(this);
+        return (EventLog.instance ??=this);
     }
 
 
@@ -22,6 +26,11 @@ export class EventLog extends React.Component {
         this.setState((prevState:Readonly<any>) => {
             return {entries:[...prevState.entries,entry]}
         }); 
+    }
+
+    /**Adds a new simple text entry*/
+    addText(text:string){
+        this.add(new LogEntry(text))
     }
 
     render() {
