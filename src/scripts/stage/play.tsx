@@ -24,16 +24,9 @@ class PlayScreen extends Stage {
         }));
 
         new Controller();
-        //TODO: rework this. It's only for test purposes
-        let log= document.getElementById("eventLog");
-        if(log!=null){
-            let root = createRoot(log);
+
+        Controller.instance.init();
         
-            //Create event Log
-            let entries = React.createElement(EventLog);
-            root.render(entries)            
-            
-        }
             
         
 

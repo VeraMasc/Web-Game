@@ -11,7 +11,7 @@ export class EventLog extends React.Component {
     entries:LogEntry[];
 
     /**Singleton pattern */
-    static instance;
+    static instance:EventLog;
 
     constructor(props={}){
         super(props)
