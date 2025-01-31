@@ -1,13 +1,8 @@
+import { LocalEntity, LocalEntityParams } from "./baseEntities";
 import { Room } from "./house";
 
-
-export class Character{
-
-    /** Name of the character */
-    name:string;
-
-    /**Display color of the character's name */
-    color:string;
+/**Defines an NPC that exists in the world*/
+export class Character extends LocalEntity{
 
     /**How healthy is the character from 0 to 100 */
     health:number=100;
@@ -22,13 +17,12 @@ export class Character{
     awareness:number=100;
 
     /**Where is the character currently? */
-    currentLocation:Room;
+    readonly currentLocation:Room;
     
 
-
-    constructor(name:string, color:string=null){
-        this.name = name;
-        this.color = color;
+    constructor({name,nameColor,location}:LocalEntityParams){
+        super({name,nameColor,location})
+  
     }
 
     /**Jumps character to a location regardless of validity or path*/

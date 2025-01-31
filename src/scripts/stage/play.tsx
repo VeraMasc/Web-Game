@@ -23,9 +23,7 @@ class PlayScreen extends Stage {
             text : "Hello World !"
         }));
 
-        new Controller();
-
-        Controller.instance.init();
+        (new Controller()).init();
         
             
         
