@@ -1,5 +1,6 @@
 import { Character } from "./character";
 import { House, Room } from "./house";
+import * as presets from "./Presets/roomPresets";
 
 /**Singleton that holds and manages the entities and environment of the game */
 export class World{
@@ -32,10 +33,10 @@ export class World{
 
         //Premade world for debug purposes
         this.currentLocation = Object.assign(new House({name:"test"}),{
-            rooms:[new Room({name:"Kitchen",type:"Kitchen"})]
+            rooms:[presets.kitchen(), presets.bathroom()]
         });
         let room=this.currentLocation.rooms[0]
-        let char = new Character({name:"TestNPC"})
-        char.jumpTo(room);
+        new Character({name:"TestNPC", location:room})
+        new Character({name:"TestNPC 2", location:room})
     }
 }

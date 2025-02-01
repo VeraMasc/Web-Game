@@ -35,7 +35,7 @@ export class LocalEntity extends BaseEntity{
          return this._currentLocation
     }
 
-    constructor({location, ...args}:{location:Room} & BaseEntityParams){
+    constructor({location, ...args}:LocalEntityParams){
         super(args)
         if(location)
             this.jumpTo(location);
@@ -58,6 +58,16 @@ export class LocalEntity extends BaseEntity{
     walkTo(location:Room){
         //TODO:Implement pathfinding
     }
+
+    /**Removes the entity from the game entirely */
+    destroy(){
+        if(this.currentLocation){ //Remove from location
+            this.currentLocation.removeEntity(this);
+        }
+        
+    }
 }
+
+
 
 

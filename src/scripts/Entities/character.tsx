@@ -35,9 +35,7 @@ export class Character extends LocalEntity{
 
     /**Removes the character from the game entirely */
     destroy(){
-        if(this.currentLocation){ //Remove from location
-            this.currentLocation.removeEntity(this);
-        }
+        super.destroy();
         World.instance.characters.delete(this);
     }
 }

@@ -24,6 +24,7 @@ export class Room extends BaseEntity{
     /**Whose room this is (relevant for Bedrooms and other room types)*/
     readonly owners:Set<Character>= new Set<Character>();
 
+    /**Creates a section of the house from params or another instance*/
     constructor({name,nameColor,type}:{type?:RoomType} & BaseEntityParams){
         name??="Empty corridor";
         super({name,nameColor})
@@ -65,6 +66,15 @@ export class Room extends BaseEntity{
         set.add(entity);
         return true;
 
+    }
+
+    /** */
+    with(...entities:LocalEntity[]){
+        let newRoom = new Room(this)
+        for(let e of entities){
+            newRoom.addEntity(e);
+        }
+        return newRoom;
     }
 }
 
