@@ -7,14 +7,18 @@ import { World } from './Entities/world';
 /**Core class that manages all the other game elements */
 export class Controller{
     /**Singleton pattern */
-    static instance:Controller=null;
+    static get instance():Controller{
+        return Controller._instance 
+    };
+
+    private static _instance:Controller=null;
 
     /**Gets the event log */
     get log() {return EventLog.instance;}
 
     constructor(){
         //Don't create controller if it already exists
-        return window['controller']=(Controller.instance ??=this); 
+        return window['controller']=(Controller._instance ??=this); 
     }
 
     /**Initializes the game and creates an empty World*/
@@ -33,6 +37,9 @@ export class Controller{
         
         //TODO: Add world construction parameters?
         new World();
+
+        //TODO: Improve world generation trigger
+        setTimeout(() => {World.instance.generate()});
     }
 
 }

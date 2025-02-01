@@ -1,5 +1,6 @@
 import { LocalEntity, LocalEntityParams } from "./baseEntities";
 import { Room } from "./house";
+import { World } from "./world";
 
 /**Defines an NPC that exists in the world*/
 export class Character extends LocalEntity{
@@ -16,27 +17,27 @@ export class Character extends LocalEntity{
     /**How aware the character is of your presence and nature from 0 to 100 */
     awareness:number=100;
 
-    /**Where is the character currently? */
-    readonly currentLocation:Room;
     
 
     constructor({name,nameColor,location}:LocalEntityParams){
         super({name,nameColor,location})
-  
+        //Add character to world
+        World.instance.characters.add(this);
+        
     }
 
-    /**Jumps character to a location regardless of validity or path*/
-    jumpTo(){
-
-    }
-
-    /**Moves character through the world until it reaches the destination (if possible)*/
-    walkTo(){
-        //TODO:Implement pathfinding
-    }
+    
 
     /**Displays character name as HTML */
     toHtml(){
         return <span>Not implemented</span>
+    }
+
+    /**Removes the character from the game entirely */
+    destroy(){
+        if(this.currentLocation){ //Remove from location
+            this.currentLocation.removeEntity(this);
+        }
+        World.instance.characters.delete(this);
     }
 }

@@ -1,4 +1,8 @@
-import { Room } from "./house";
+import { House, Room } from "./house";
+
+
+/**Parameter signature of the base entity */
+export type BaseEntityParams= {name:string, nameColor?:string};
 
 /**Encapsulates all elements that exist withtin the game world */
 export class BaseEntity{
@@ -8,26 +12,52 @@ export class BaseEntity{
     /**Display color of the entity's name */
     nameColor:string;
 
-    constructor({name, nameColor}:{name:string, nameColor?:string}){
+    constructor({name, nameColor}:BaseEntityParams){
         this.name = name;
         this.nameColor = nameColor
   
     }
 }
 
-/**Parameter signature of the base entity */
-export type BaseEntityParams= ConstructorParameters<typeof BaseEntity>[0]
+
+
+
+/**Parameter signature of local entities */
+export type LocalEntityParams= {location?:Room} & BaseEntityParams
 
 /**Entities that occupy locations in the world and can move through it */
 export class LocalEntity extends BaseEntity{
 
-    constructor({location, ...args}:{location:Room} & BaseEntityParams){
-        super(args)
+    /**Private version of currentLocation */
+    private _currentLocation;
+    /**Where is the entity currently? */
+    get currentLocation():Room {
+         return this._currentLocation
     }
 
-     
+    constructor({location, ...args}:{location:Room} & BaseEntityParams){
+        super(args)
+        if(location)
+            this.jumpTo(location);
+    }
+
+     /**Jumps entity to a location regardless of validity or path*/
+    jumpTo(location:Room){
+        //Remove old
+        if(this.currentLocation?.removeEntity(this)){
+            this._currentLocation = null;
+        }
+        //Set new
+        if(location?.addEntity(this)){
+            this._currentLocation = location
+        }
+        //TODO: Add location change events
+    }
+
+    /**Moves entity through the world until it reaches the destination (if possible)*/
+    walkTo(location:Room){
+        //TODO:Implement pathfinding
+    }
 }
 
 
-/**Parameter signature of local entities */
-export type LocalEntityParams= ConstructorParameters<typeof LocalEntity>[0]

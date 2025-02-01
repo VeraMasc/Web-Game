@@ -7,9 +7,6 @@ export class Interactable extends LocalEntity{
     /**Who owns (and therefore uses) the object*/
     owners:Character[]=[]
 
-    /**Where is the interactable currently? */
-    readonly currentLocation:Room|House;
-
     constructor({name,nameColor,location}:LocalEntityParams){
             super({name,nameColor,location})
       

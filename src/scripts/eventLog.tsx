@@ -2,6 +2,13 @@ import React, {useState} from "react"
 
 /**Handles the log history of events */
 export class EventLog extends React.Component {
+    /**Singleton pattern */
+    static get instance():EventLog{
+        return EventLog._instance 
+    };
+
+    private static _instance:EventLog=null;
+
     /**React state of the component */
     state: Readonly<{entries:LogEntry[]}>={
         entries: []
@@ -10,13 +17,11 @@ export class EventLog extends React.Component {
     /**List of all the entries*/
     entries:LogEntry[];
 
-    /**Singleton pattern */
-    static instance:EventLog;
 
     constructor(props={}){
         super(props)
                 console.log(this);
-        return (EventLog.instance ??=this);
+        return (EventLog._instance ??=this);
     }
 
 
