@@ -4,7 +4,7 @@ import { House, Room } from "./house";
 /**Parameter signature of the base entity */
 export type BaseEntityParams= {name:string, nameColor?:string};
 
-/**Encapsulates all elements that exist withtin the game world */
+/**Encompasses all elements that exist withtin the game world */
 export class BaseEntity{
     /** Name of the entity */
     name:string;

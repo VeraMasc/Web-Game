@@ -1,6 +1,6 @@
 import { Room } from "../house";
 import { knife } from "./itemPresets";
-import { shower } from "./iteractPresets";
+import { shower } from "./interactPresets";
 
 /**Kitchen preset */
 export var kitchen = ()=> new Room({name:"Kitchen",type:"Kitchen"})

@@ -1,6 +1,9 @@
 import { Character } from "./character";
 import { House, Room } from "./house";
 import * as presets from "./Presets/roomPresets";
+import preset from "./Presets/presets";
+
+
 
 /**Singleton that holds and manages the entities and environment of the game */
 export class World{
@@ -30,13 +33,14 @@ export class World{
         //TODO:Fully implement world generation
 
         //TODO:Stop using a premade world
-
+        
         //Premade world for debug purposes
-        this.currentLocation = Object.assign(new House({name:"test"}),{
-            rooms:[presets.kitchen(), presets.bathroom()]
-        });
+        this.currentLocation = (new House({name:"test"}))
+            .with( preset.rooms.kitchen(), presets.bathroom());
+
         let room=this.currentLocation.rooms[0]
         new Character({name:"TestNPC", location:room})
         new Character({name:"TestNPC 2", location:room})
+
     }
 }
