@@ -36,7 +36,7 @@ export class World{
         
         //Premade world for debug purposes
         this.currentLocation = (new House({name:"test"}))
-            .with( preset.rooms.kitchen(), presets.bathroom());
+            .with( preset.rooms.kitchen(), presets.bathroom(), presets.bathroom());
 
         let room=this.currentLocation.rooms[0]
         new Character({name:"TestNPC", location:room})

@@ -1,10 +1,11 @@
-import { BaseEntity,  LocalEntityParams } from "./Entities/baseEntities";
-import { Interactable } from "./Entities/interactable";
+import { BaseEntity,  LocalEntityParams } from "./baseEntities";
+import { Interactable } from "./interactable";
 
 
 /**Items that can be carried or stored by LocalEntities*/
 export class Item extends BaseEntity{
     
+    /**Returns the Item as content of an {@link ItemHolder} */
     asHolder(){
         return new ItemHolder(this,this) //Creates a holder version of the item
     }
@@ -19,12 +20,25 @@ export class ItemHolder extends Interactable{
         return this._item;
     }
 
-    constructor(item:Item, params:LocalEntityParams){
-        if(item==null)
-            return null; //Create only if it holds an item
+    //Create from item overload
+    constructor(item:Item, params:LocalEntityParams);
+    //Clone overload 
+    constructor(item:ItemHolder);
+    constructor(item:Item|ItemHolder, params?:LocalEntityParams){
+        if(item == null)
+            return;
+        //Extract from holder
+        if(item instanceof ItemHolder){
+            params = item;
+            item = item.item;
+        }
+        //Create from item
         super(params)
         this._item = item;
     }
+
+
+    
 
     /**Gets the item and destroys the holder */
     extractItem(){

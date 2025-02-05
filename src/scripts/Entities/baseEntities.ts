@@ -12,14 +12,21 @@ export class BaseEntity{
     /**Display color of the entity's name */
     nameColor:string;
 
-    constructor({name, nameColor}:BaseEntityParams){
+    constructor({name, nameColor}:BaseEntityParams|BaseEntity){
         this.name = name;
         this.nameColor = nameColor
   
     }
+
+    /**Clones the current entity */
+    clone():this{
+        var constructor = this.constructor as EntityConstructor<this>;
+        return new constructor(this); 
+    }
 }
 
-
+/**Base constructor pattern of all entities */
+type EntityConstructor<T extends BaseEntity> = {new (arg:T):T}
 
 
 /**Parameter signature of local entities */
@@ -38,11 +45,20 @@ export class LocalEntity extends BaseEntity{
     constructor({location, ...args}:LocalEntityParams){
         super(args)
         if(location)
-            this.jumpTo(location);
+            this.jumpTo(location, true);
     }
 
-     /**Jumps entity to a location regardless of validity or path*/
-    jumpTo(location:Room){
+    
+    /**Clones the current localEntity without assigning it to a room */
+    clone():this{
+        return super.clone(); 
+    }
+    
+
+     /**Jumps entity to a location regardless of validity or path
+      * @param noEvents Moves the entity without triggering location events
+     */
+    jumpTo(location:Room, noEvents=false){
         //Remove old
         if(this.currentLocation?.removeEntity(this)){
             this._currentLocation = null;
@@ -51,6 +67,9 @@ export class LocalEntity extends BaseEntity{
         if(location?.addEntity(this)){
             this._currentLocation = location
         }
+        
+        if(noEvents)
+            return;
         //TODO: Add location change events
     }
 

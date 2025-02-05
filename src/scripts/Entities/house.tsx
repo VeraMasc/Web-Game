@@ -1,24 +1,27 @@
 import { BaseEntity, BaseEntityParams, LocalEntity } from "./baseEntities";
 import { Character } from "./character";
 import { Interactable } from "./interactable";
-import { Door } from './door';
+import { Door, RoomRef } from './door';
 
 /**Holds and manages the different environments of the house */
 export class House extends BaseEntity{
 
     /**List of all the rooms in the house */
-    rooms:Room[]=[]
+    rooms:Set<Room>=new Set<Room>()
 
     /**Like {@link Room.content} but applies the same {@link Interactable} to all rooms*/
     globalContent:Interactable[]
 
     //TODO: add connections between rooms
 
-    /**Generates a new instance of the house with the given rooms */
-    with(...rooms:Room[]){
-        let newHouse = new House(this)
-        newHouse.rooms=rooms;
-        return newHouse;
+    /**Populates the house with the given rooms */
+    with(...rooms:Room[]):this{
+        for(let item of rooms) {
+            item.parent = this;
+            this.rooms.add(item)
+        }
+        
+        return this
     }
 }
 
@@ -36,6 +39,11 @@ export class Room extends BaseEntity{
 
     /**Characters that are currently in the room*/
     readonly occupants:Set<Character>= new Set<Character>();
+
+    /**Gets all the local entities in the room (Characters and interactables)*/
+    get localEntities():LocalEntity[]{
+        return [...this.content,...this.occupants]
+    }
 
     /**Whose room this is (relevant for Bedrooms and other room types)*/
     readonly owners:Set<Character>= new Set<Character>();
@@ -87,13 +95,29 @@ export class Room extends BaseEntity{
 
     }
 
-    /**Generates a new instance of the room with the given content */
-    with(...entities:LocalEntity[]){
-        let newRoom = new Room(this)
+    clone(): this {
+        var newroom=super.clone(); //Copy base values
+        let entities = this.localEntities.map(e => e.clone()) //Clone entities
+        newroom.with(...entities) //Fill room
+        return newroom;
+    }
+    
+
+    /**Populates the room with the given content */
+    with(...entities:LocalEntity[]):Room{
         for(let e of entities){
-            newRoom.addEntity(e);
+            e.jumpTo(this, true);
         }
-        return newRoom;
+        return this;
+    }
+
+    /**Connects the room with the given doors */
+    connects(...rooms:RoomRef[]):Room{
+        for(let r of rooms){
+            //TODO: Create doors
+            throw new Error("Not implemented")
+        }
+        return this;
     }
 }
 
