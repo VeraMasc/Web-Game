@@ -1,5 +1,6 @@
 import { Character } from "./character";
-import { House, Room } from "./house";
+import { House } from "./house";
+import { Room } from "./Room";
 import * as presets from "./Presets/roomPresets";
 import preset from "./Presets/presets";
 
@@ -36,7 +37,11 @@ export class World{
         
         //Premade world for debug purposes
         this.currentLocation = (new House({name:"test"}))
-            .with( preset.rooms.kitchen(), presets.bathroom(), presets.bathroom());
+            .with( 
+                preset.rooms.kitchen(), 
+                presets.bathroom().connects(1,-1), 
+                presets.bathroom()
+            );
 
         let room=this.currentLocation.rooms[0]
         new Character({name:"TestNPC", location:room})

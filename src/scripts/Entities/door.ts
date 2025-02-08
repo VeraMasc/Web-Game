@@ -1,6 +1,10 @@
-import { Room } from "./house";
+import { Room } from "./Room";
 
+//TODO: Implement cloning doors
 
+//TODO: Implement assigning doors
+
+//TODO: Implement merging identical doors
 
 /**References a Room directly or through a placeholder value.
  * numeric values are relative to room order in house.
@@ -15,9 +19,27 @@ export class Door {
     /**Second room to connect */
     pointB?:RoomRef;
 
+    /**Places in the world where the door is */
+    locations:Room[]=[];
+
+    /**Returns the points as a list */
+    get points(){
+        return [this.pointA,this.pointB]
+    }
+
+    /**Sets the points as a list */
+    set points(value:RoomRef[]){
+        [this.pointA,this.pointB] = value;
+    }
+
     constructor({pointA, pointB}:{pointA?:RoomRef, pointB?:RoomRef}){
         this.pointA = pointA;
         this.pointB = pointB;
+        
+        //Assign to rooms if not a placeholder
+        if(!this.isPlaceholder){
+            this.setInRooms(this.points as Room[])
+        }
     }
 
     /**Door has placeholder nodes values */
@@ -29,16 +51,79 @@ export class Door {
     get isOpen(){
         return !this.isPlaceholder
     }
+
+    /**Checks if the doors are basically interchangeable */
+    isEquivalent(other:Door){
+        return JSON.stringify(this) === JSON.stringify(other);
+    }
+
+    /**Resolves the door's placeholder connections   */
+    resolve(context:Room[]){
+        if(!this.isPlaceholder)
+            return;
+
+        //Resolve room values
+        this.points = this.points.map((p,n) => {
+            //Ignore references
+            if(p instanceof Room || p == null)
+                return p; 
+            //Resolve absolute
+            if(typeof p === "string" && p.startsWith("#")){
+                let index = parseInt(p.slice(1))
+                return context[index];
+            }
+            //Resolve relative
+            if(typeof p === "number"){
+                let index = Math.trunc(p);
+                return context[n+index];
+            }
+
+            console.error("Invalid room reference: "+p)
+            
+        });
+
+        //Finish assignation
+        this.setInRooms(this.points as Room[])
+    }
+
+    /**Checks if it's a reference to a room (or null) */
+    static isRef(ref:RoomRef){
+        return  ref instanceof Room || ref == null;
+    }
+    
+    /**Returns if the door is assigned to the room */
+    isInRoom(room:Room){
+        return this.locations.includes(room);
+    }
+
+    /**Sets the rooms the door is actually found in */
+    setInRooms(rooms:Room[]){
+        this.removeInRooms();
+
+        for(let r of rooms){
+            this.locations.push(r); //Add location
+            r.doors.add(this);
+        }
+    }
+
+    /**Removes the door from all rooms*/
+    removeInRooms(){
+        for(let r of this.locations){
+            r.doors.delete(this);
+        }
+        this.locations =[];
+    }
+    
 }
 
 /**References a room in order*/
-export type AbsRoomPlhd = `#${bigint}`;
+export type AbsRoomPlhd = `#${number}`;
 
 /**References a room relative to another */
-export type RelRoomPlhd = bigint;
+export type RelRoomPlhd = number;
 
 /**Contains all ways to reference a room indirectly */
-export type RoomPlaceholder = RelRoomPlhd;
+export type RoomPlaceholder = RelRoomPlhd|AbsRoomPlhd;
 
 
 

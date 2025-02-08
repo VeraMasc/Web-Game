@@ -1,4 +1,5 @@
-import { House, Room } from "./house";
+import { House } from "./house";
+import { Room } from "./Room";
 
 
 /**Parameter signature of the base entity */
