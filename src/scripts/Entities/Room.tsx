@@ -1,12 +1,17 @@
 import { BaseEntity, LocalEntity, BaseEntityParams } from "./baseEntities";
 import { Character } from "./character";
 import { Door, RoomRef } from "./door";
-import { RoomType, House } from "./house";
+import { House } from "./house";
 import { Interactable } from "./interactable";
 
+
+
+
+/**Possible types or rooms that exist */
+export type RoomType = null | "Bedroom" | "Kitchen" | "Hall" | "Bathroom" ;
+
+
 /**Describes a section of a House */
-
-
 export class Room extends BaseEntity {
     /**The kind of room this is */
     type: RoomType;

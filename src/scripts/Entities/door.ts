@@ -54,6 +54,7 @@ export class Door {
 
     /**Checks if the doors are basically interchangeable */
     isEquivalent(other:Door){
+        throw "Not implemented";
         return JSON.stringify(this) === JSON.stringify(other);
     }
 
@@ -112,6 +113,17 @@ export class Door {
             r.doors.delete(this);
         }
         this.locations =[];
+    }
+
+    /**Remaps door references using an equivalence map*/
+    static remapPoints(points:RoomRef[],roomMap:Map<Room,Room>){
+        //TODO: Move to rooms class?
+        return points.map(p=>{
+            if(Door.isRef(p))
+                return p; //Ignore unresolved references
+
+            return roomMap.get(p as Room) ?? null;
+        })
     }
     
 }

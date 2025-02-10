@@ -5,8 +5,8 @@ export class StoryEvent{
     /**Requirements for the event to trigger */
     conditions;
 
-    /**Probability equation for the event to trigger if the conditions are met */
-    probability;
+    /**Probability (0 to 1) equation for the event to trigger if the conditions are met */
+    probability:()=>number|number;
 
     /**What happens when the Event triggers */
     effects;

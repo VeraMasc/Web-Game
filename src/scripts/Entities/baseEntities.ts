@@ -14,15 +14,20 @@ export class BaseEntity{
     nameColor:string;
 
     constructor({name, nameColor}:BaseEntityParams|BaseEntity){
-        this.name = name;
-        this.nameColor = nameColor
-  
+        this.nameAs({name,nameColor})
     }
 
     /**Clones the current entity */
     clone():this{
         var constructor = this.constructor as EntityConstructor<this>;
         return new constructor(this); 
+    }
+
+    /**Renames the entity */
+    nameAs({name, nameColor}:BaseEntityParams):this{
+        this.name = name;
+        this.nameColor = nameColor
+        return this;
     }
 }
 

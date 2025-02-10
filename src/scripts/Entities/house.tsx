@@ -1,6 +1,7 @@
 import { BaseEntity } from "./baseEntities";
 import { Interactable } from "./interactable";
 import { Room } from "./Room";
+import { Door } from './door';
 
 /**Holds and manages the different environments of the house */
 export class House extends BaseEntity{
@@ -36,10 +37,33 @@ export class House extends BaseEntity{
         }
         return this;
     }
+
+    clone(): this { //TODO: Optimize house cloning
+        let newHouse = super.clone()
+        //Clone rooms
+        let rMap = new Map<Room,Room>(); //Which new room matches the old
+        let dSet = new Set<Door>(); //Set of all doors in OG house
+
+        for(let r of this.rooms){
+            let newRoom = r.clone();
+            newHouse.rooms.add(newRoom);
+            rMap.set(r,newRoom); //Store equivalence
+
+            for(let d of r.doors){
+                dSet.add(d) //Store doors without duplicates
+            }
+        }
+
+        //Clone doors
+        for(let d of dSet){
+            let points = d.points;
+            let [pointA, pointB] = Door.remapPoints(points,rMap);
+            let newDoor = new Door({pointA, pointB});
+                
+        }
+        //TODO: Clone doors
+        
+        return newHouse;
+    }
 }
 
-
-/**Possible types or rooms that exist */
-export type RoomType = null | "Bedroom" | "Kitchen" | "Hall" | "Bathroom" ;
-
-//TODO: Add room presets
