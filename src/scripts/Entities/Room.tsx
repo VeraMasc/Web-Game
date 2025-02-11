@@ -8,7 +8,7 @@ import { Interactable } from "./interactable";
 
 
 /**Possible types or rooms that exist */
-export type RoomType = null | "Bedroom" | "Kitchen" | "Hall" | "Bathroom" ;
+export type RoomType = null | "Bedroom" | "Kitchen" | "Hall" | "Bathroom" | "Outside";
 
 
 /**Describes a section of a House */

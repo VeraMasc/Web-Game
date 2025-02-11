@@ -58,8 +58,11 @@ export class Door {
         return JSON.stringify(this) === JSON.stringify(other);
     }
 
-    /**Resolves the door's placeholder connections   */
-    resolve(context:Room[]){
+    /**Resolves the door's placeholder connections
+     * @param context rooms in the same house as the door
+     * @param exterior room to use as the exterior of the house for resolution
+      */
+    resolve(context:Room[], exterior:Room=null){
         if(!this.isPlaceholder)
             return;
 
@@ -71,6 +74,8 @@ export class Door {
             //Resolve absolute
             if(typeof p === "string" && p.startsWith("#")){
                 let index = parseInt(p.slice(1))
+                if(index == -1) //Resolve exterior
+                    return exterior ?? p; 
                 return context[index];
             }
             //Resolve relative

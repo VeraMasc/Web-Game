@@ -23,7 +23,7 @@ export class World{
     currentLocation:House;
 
     /**Pseudo Rooms that represent the outside world */
-    outsideRooms:Room[]=[new Room({name:"Outside"})];
+    outsideRooms:Room[]=[presets.outside()];
 
     constructor(){
         //Don't create controller if it already exists
@@ -34,11 +34,10 @@ export class World{
     generate(){
         //TODO:Fully implement world generation
 
-        //TODO:Stop using a premade world
         
         //Premade world for debug purposes
         this.currentLocation = baseHouse()
-            .resolveConnections();
+            .resolveConnections(this.outsideRooms[0]);
 
         let room=this.currentLocation.rooms[0]
         new Character({name:"TestNPC", location:room})

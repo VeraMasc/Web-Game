@@ -24,15 +24,17 @@ export class House extends BaseEntity{
         return this
     }
 
-    /**Resolves the door placeholders */
-    resolveConnections(){
+    /**Resolves the door placeholders 
+     * @param exterior room to use as the exterior of the house for resolution
+    */
+    resolveConnections(exterior:Room=null){
         let i=0;
         let roomArr = [...this.rooms];
         //Iterate rooms
         for(let room of roomArr){
             //Iterate room doors
             for(let door of room.doors){
-                door.resolve(roomArr)
+                door.resolve(roomArr, exterior)
             }
         }
         return this;

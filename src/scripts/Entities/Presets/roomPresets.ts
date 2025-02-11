@@ -9,3 +9,6 @@ export var kitchen = ()=> new Room({name:"Kitchen",type:"Kitchen"})
 /**Bathroom preset (shower) */
 export var bathroom = ()=> new Room({name:"Bathroom",type:"Kitchen"})
         .with( shower() );
+
+/**Outside preset */
+export var outside = ()=> new Room({name:"Outside",type:"Outside"});
