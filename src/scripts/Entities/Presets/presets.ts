@@ -4,6 +4,9 @@ import * as interact from "./interactPresets"
 import * as houses from "./housePresets"
 import { BaseEntity } from "../baseEntities";
 
+var txColor = {
+    firebrick:"firebrick",
+    dodgerblue:"dodgerblue",
+}
 
-
-export default {rooms, item, interact,houses};
+export default {rooms, item, interact, houses, txColor};

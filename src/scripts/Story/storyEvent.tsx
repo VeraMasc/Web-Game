@@ -1,5 +1,6 @@
 import { JSX } from "react";
 import { IRenderEl } from "../UI/IRenderEl";
+import { renderToString } from "react-dom/server";
 
 /**Describes a specific type of event that can happen in the story */
 export class StoryEvent implements IRenderEl{
@@ -21,5 +22,8 @@ export class StoryEvent implements IRenderEl{
     }
     toString(): string {
         throw new Error("Method not implemented.");
+    }
+    toHTMLString():string {
+        return renderToString(this.toHtml());
     }
 }

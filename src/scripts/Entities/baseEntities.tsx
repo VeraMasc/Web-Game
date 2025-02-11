@@ -1,6 +1,7 @@
 import { House } from "./house";
 import { Room } from "./room";
 import { IRenderEl } from "../UI/IRenderEl";
+import { renderToString } from "react-dom/server";
 
 
 /**Parameter signature of the base entity */
@@ -24,15 +25,22 @@ export class BaseEntity implements IRenderEl{
         return new constructor(this); 
     }
 
-    /**Renames the entity */
+    /**Renames and/or recolors the entity (use null for no changes) */
     nameAs({name, nameColor}:BaseEntityParams):this{
-        this.name = name;
-        this.nameColor = nameColor
+        this.name = name ?? this.name;
+        this.nameColor = nameColor ?? this.nameColor;
         return this;
+    }
+    toString(): string {
+        return this.name;
     }
 
     toHtml(){
         return <span style={{color:this.nameColor}}>{this.name}</span>
+    }
+
+    toHTMLString():string {
+        return renderToString(this.toHtml());
     }
 }
 

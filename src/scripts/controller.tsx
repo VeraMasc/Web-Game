@@ -37,10 +37,8 @@ export class Controller{
             EventLog.instance.addRaw((<span><b>BOLD</b> & <small>small</small></span>))
         });
         
-        //TODO: Add world construction parameters?
         new World();
-
-        //TODO: Improve world generation trigger
+        
         setTimeout(() => {World.instance.generate()});
     }
 

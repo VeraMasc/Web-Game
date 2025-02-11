@@ -46,9 +46,11 @@ export class EventLog extends React.Component {
     toHtml() {
         for(let e of this.state.entries){
             console.log(`Entry: ${e}`);
+            console.log(renderToString(e.toHtmlString()))
         }
-       
-        return this.state.entries.map(e => e.toHtml())
+        let ret = this.state.entries.map(e => e.toHtml());
+        console.log(renderToString(ret));
+        return ret
     }
 
 }
@@ -79,6 +81,10 @@ export class LogEntry {
 
     toHtml() {
         return <p className="LogEntry" key={this.logId}><span className="LogTitle">{this.title}</span>{this.content}</p>
+    }
+
+    toHtmlString():string {
+        return renderToString(this.toHtml());
     }
 
 }

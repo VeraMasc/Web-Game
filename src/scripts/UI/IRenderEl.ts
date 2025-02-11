@@ -6,4 +6,5 @@ export interface IRenderEl{
 
     toHtml():JSX.Element;
     toString():string;
+    toHTMLString():string;
 }

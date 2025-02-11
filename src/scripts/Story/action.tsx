@@ -1,5 +1,6 @@
 import { JSX } from "react";
 import { IRenderEl } from "../UI/IRenderEl";
+import { renderToString } from "react-dom/server";
 
 /**Possible actions that can be taken by the player */
 export class Action implements IRenderEl{
@@ -16,7 +17,11 @@ export class Action implements IRenderEl{
     toHtml(): JSX.Element {
         throw new Error("Method not implemented.");
     }
+
     toString(): string {
         throw new Error("Method not implemented.");
+    }
+    toHTMLString():string {
+        return renderToString(this.toHtml());
     }
 }
