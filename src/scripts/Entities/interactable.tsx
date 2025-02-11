@@ -1,7 +1,7 @@
 import { LocalEntity, LocalEntityParams } from "./baseEntities";
 import { Character } from "./character";
 import { House } from "./house";
-import { Room } from "./Room";
+import { Room } from "./room";
 
 /**Elements of the world that can be interacted with*/
 export class Interactable extends LocalEntity{

@@ -1,6 +1,6 @@
 import { BaseEntity } from "./baseEntities";
 import { Interactable } from "./interactable";
-import { Room } from "./Room";
+import { Room } from "./room";
 import { Door } from './door';
 
 /**Holds and manages the different environments of the house */
@@ -40,7 +40,7 @@ export class House extends BaseEntity{
         return this;
     }
 
-    clone(): this { //TODO: Optimize house cloning
+    clone(): this { 
         let newHouse = super.clone()
         //Clone rooms
         let rMap = new Map<Room,Room>(); //Which new room matches the old
@@ -63,7 +63,6 @@ export class House extends BaseEntity{
             let newDoor = new Door({pointA, pointB});
                 
         }
-        //TODO: Clone doors
         
         return newHouse;
     }

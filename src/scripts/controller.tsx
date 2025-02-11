@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { EventLog } from './eventLog';
+import { EventLog } from './UI/eventLog';
 import React from 'react';
 import { World } from './Entities/world';
 
@@ -33,7 +33,9 @@ export class Controller{
         }
 
         //TODO: Remove temporary fix
-        setTimeout(() => {EventLog.instance.addText("Start")});
+        setTimeout(() => {EventLog.instance.addRaw("Start")
+            EventLog.instance.addRaw((<span><b>BOLD</b> & <small>small</small></span>))
+        });
         
         //TODO: Add world construction parameters?
         new World();

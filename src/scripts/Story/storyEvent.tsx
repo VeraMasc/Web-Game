@@ -1,7 +1,9 @@
+import { JSX } from "react";
+import { IRenderEl } from "../UI/IRenderEl";
 
 /**Describes a specific type of event that can happen in the story */
-export class StoryEvent{
-
+export class StoryEvent implements IRenderEl{
+    
     /**Requirements for the event to trigger */
     conditions;
 
@@ -13,4 +15,11 @@ export class StoryEvent{
 
     /**Message to print in the log when the event triggers */
     message;
+
+    toHtml(): JSX.Element {
+        throw new Error("Method not implemented.");
+    }
+    toString(): string {
+        throw new Error("Method not implemented.");
+    }
 }

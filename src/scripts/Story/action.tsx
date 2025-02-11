@@ -1,6 +1,8 @@
+import { JSX } from "react";
+import { IRenderEl } from "../UI/IRenderEl";
 
 /**Possible actions that can be taken by the player */
-export class Action{
+export class Action implements IRenderEl{
     /**HTML text used to describe the action*/
     description:string;
 
@@ -9,5 +11,12 @@ export class Action{
             this.description="Placeholder action";
         else
             this.description=desc;
+    }
+    
+    toHtml(): JSX.Element {
+        throw new Error("Method not implemented.");
+    }
+    toString(): string {
+        throw new Error("Method not implemented.");
     }
 }

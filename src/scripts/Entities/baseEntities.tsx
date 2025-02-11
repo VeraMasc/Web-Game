@@ -1,12 +1,13 @@
 import { House } from "./house";
-import { Room } from "./Room";
+import { Room } from "./room";
+import { IRenderEl } from "../UI/IRenderEl";
 
 
 /**Parameter signature of the base entity */
 export type BaseEntityParams= {name:string, nameColor?:string};
 
 /**Encompasses all elements that exist withtin the game world */
-export class BaseEntity{
+export class BaseEntity implements IRenderEl{
     /** Name of the entity */
     name:string;
 
@@ -28,6 +29,10 @@ export class BaseEntity{
         this.name = name;
         this.nameColor = nameColor
         return this;
+    }
+
+    toHtml(){
+        return <span style={{color:this.nameColor}}>{this.name}</span>
     }
 }
 

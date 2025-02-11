@@ -1,10 +1,5 @@
-import { Room } from "./Room";
+import { Room } from "./room";
 
-//TODO: Implement cloning doors
-
-//TODO: Implement assigning doors
-
-//TODO: Implement merging identical doors
 
 /**References a Room directly or through a placeholder value.
  * numeric values are relative to room order in house.

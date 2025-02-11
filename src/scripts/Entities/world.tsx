@@ -1,9 +1,10 @@
 import { Character } from "./character";
 import { House } from "./house";
-import { Room } from "./Room";
+import { Room } from "./room";
 import * as presets from "./Presets/roomPresets";
 import preset from "./Presets/presets";
 import { baseHouse } from "./Presets/housePresets";
+import { Player } from './player';
 
 
 
@@ -34,7 +35,8 @@ export class World{
     generate(){
         //TODO:Fully implement world generation
 
-        
+        new Player({name:"player"});
+
         //Premade world for debug purposes
         this.currentLocation = baseHouse()
             .resolveConnections(this.outsideRooms[0]);

@@ -1,4 +1,4 @@
-import { Room } from "../Room";
+import { Room } from "../room";
 import { knife } from "./itemPresets";
 import { shower } from "./interactPresets";
 

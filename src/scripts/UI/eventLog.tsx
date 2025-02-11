@@ -1,4 +1,5 @@
-import React, {useState} from "react"
+import React, {useState,JSX} from "react"
+import { renderToString } from 'react-dom/server';
 
 /**Handles the log history of events */
 export class EventLog extends React.Component {
@@ -33,9 +34,9 @@ export class EventLog extends React.Component {
         }); 
     }
 
-    /**Adds a new simple text entry*/
-    addText(text:string){
-        this.add(new LogEntry(text))
+    /**Adds a new simple text/jsx entry*/
+    addRaw(text:string|JSX.Element, title?:string){
+        this.add(new LogEntry(text, title))
     }
 
     render() {
@@ -55,22 +56,29 @@ export class EventLog extends React.Component {
 /**Entry of the log*/
 export class LogEntry {
     /**Unique ID of the log */
-    logId;
+    logId:string;
+    
 
     /**
-     * @param text Text of the entry
+     * @param content Text of the entry
      * @param title Title of the entry (describes the type of entry)
      */
-    constructor(public text:string,public title:string=""){
+    constructor(public content:string|JSX.Element, public title:string=""){
         this.logId=crypto.randomUUID();
     }
 
     toString():string {
-        return "Test"
+        var str:string;
+        if(typeof this.content === "string"){
+            str = this.content
+        }else{
+            str = renderToString(this.content);
+        }
+        return `${this.title}: ${str}`;
     }
 
     toHtml() {
-        return <p className="LogEntry" key={this.logId}><span className="LogTitle">Test: </span>{this.text}</p>
+        return <p className="LogEntry" key={this.logId}><span className="LogTitle">{this.title}</span>{this.content}</p>
     }
 
 }

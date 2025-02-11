@@ -1,5 +1,5 @@
 import { LocalEntity, LocalEntityParams } from "./baseEntities";
-import { Room } from "./Room";
+import { Room } from "./room";
 import { World } from "./world";
 
 /**Defines an NPC that exists in the world*/
