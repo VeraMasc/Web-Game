@@ -1,10 +1,11 @@
-import { Character } from "./character";
-import { House } from "./house";
-import { Room } from "./room";
-import * as presets from "./Presets/roomPresets";
-import preset from "./Presets/presets";
-import { baseHouse } from "./Presets/housePresets";
-import { Player } from './player';
+import { Character } from "../Entities/character";
+import { House } from "../Entities/house";
+import { Room } from "../Entities/room";
+import * as presets from "../Entities/Presets/roomPresets";
+import preset from "../Entities/Presets/presets";
+import { baseHouse } from "../Entities/Presets/housePresets";
+import { Player } from '../Entities/player';
+import { GameTime } from './time';
 
 
 
@@ -22,6 +23,9 @@ export class World{
 
     /**Place where the player currently is */
     currentLocation:House;
+
+    /**Current game time */
+    time = new GameTime()
 
     /**Pseudo Rooms that represent the outside world */
     outsideRooms:Room[]=[presets.outside()];

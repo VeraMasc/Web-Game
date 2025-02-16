@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { EventLog } from './UI/eventLog';
 import React from 'react';
-import { World } from './Entities/world';
+import { World } from './World/world';
 
 
 /**Core class that manages all the other game elements */

@@ -1,6 +1,6 @@
 import { LocalEntity, LocalEntityParams } from "./baseEntities";
 import { Room } from "./room";
-import { World } from "./world";
+import { World } from "../World/world";
 
 /**Defines an NPC that exists in the world*/
 export class Character extends LocalEntity{
