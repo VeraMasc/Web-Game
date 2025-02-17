@@ -3,14 +3,15 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { selectAtom,splitAtom  } from "jotai/utils";
 import { Controller } from '../controller';
+import {TodoList, TestList} from "./jotaiTest"
 
 
 /**Renders the action menu */
 export class ActionMenu{
     //TODO: Finish testing jotai
     optionList:string[]=["Actions","Stats","Config"];
-    actionAtom:PrimitiveAtom<string[]>= null;
-    actionSetAtom:ReturnType<typeof useSetAtom<PrimitiveAtom<string[]>>>=null;
+    listAtom= atom<PrimitiveAtom<string>[]>([atom("AAAA")]);
+    actionSetAtom:ReturnType<typeof useSetAtom<PrimitiveAtom<PrimitiveAtom<string>[]>>>=null;
 
    
 
@@ -21,24 +22,31 @@ export class ActionMenu{
         if(menu!=null){
             let instance = new ActionMenu()
             Controller.instance.menu = instance;
-            instance.actionAtom = atom(instance.optionList);
             
             let root = createRoot(menu);
             root.render(React.createElement(instance.toHTML))            
         }
     }
 
-    toHTML=()=>{
-        [,this.actionSetAtom] = useAtom(this.actionAtom);
-        let select = splitAtom(this.actionAtom) //TODO: Causes error when entry is removed
-        let [splitUse]=useAtom(select);
-        return (
-        <> {splitUse.map( action=>{
-            let [actionUse] = useAtom(action);
-            return <input type="button" data-atom={action} className="optionButton" value={actionUse}/>
-        })}</>
-        )
+    InputButton({atom,add}){
+        let [actionUse] = useAtom(atom);
+        return <input type="button" data-atom={atom} onClick={add} className="optionButton" value={actionUse as string}/>
     }
 
+    toHTML=()=>{
+        let setList = this.actionSetAtom = useSetAtom(this.listAtom);
+        let [splitUse]=useAtom(this.listAtom);
+        let add =()=>{
+            setList((prev)=>[...prev, atom("aaa")])
+        }
+        return (
+        <> {splitUse.map( action=>{
+            
+            return <this.InputButton atom={action} add={add}/>
+        })}
+        </>
+        
+        )
+    }
     
 }
