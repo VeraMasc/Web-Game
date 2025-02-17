@@ -21,6 +21,8 @@ export class GameTime{
         var num = this.section+ sectionAmount;
         this.section = num % DaySection._length;
         this.day += Math.floor(num / DaySection._length);
+
+        //TODO: Trigger time change events
         return this;
     }
 

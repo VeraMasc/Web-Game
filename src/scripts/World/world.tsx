@@ -39,7 +39,7 @@ export class World{
     generate(){
         //TODO:Fully implement world generation
 
-        new Player({name:"player"});
+        new Player();
 
         //Premade world for debug purposes
         this.currentLocation = baseHouse()

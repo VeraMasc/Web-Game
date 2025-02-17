@@ -9,7 +9,14 @@ export class Player extends BaseEntity{
 
     private static _instance:Player=null;
 
-    //TODO: Better player constuctor
+    constructor(){
+        //TODO: Better player constuctor
+        super({name:"Player"})
+        //Don't create player if it already exists
+        return window['player']=(Player._instance ??=this);
+    }
+
+    
 
     //TODO: Loss conditions
 }
