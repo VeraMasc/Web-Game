@@ -1,5 +1,7 @@
 import React, {useState,JSX} from "react"
 import { renderToString } from 'react-dom/server';
+import { atom,PrimitiveAtom, useAtom } from "jotai";
+import { selectAtom } from "jotai/utils";
 
 /**Handles the log history of events */
 export class EventLog extends React.Component {
@@ -59,6 +61,7 @@ export class EventLog extends React.Component {
 export class LogEntry {
     /**Unique ID of the log */
     logId:string;
+    logAtom:PrimitiveAtom<LogEntry> =null;
     
 
     /**
@@ -80,6 +83,7 @@ export class LogEntry {
     }
 
     toHtml() {
+
         return <p className="LogEntry" key={this.logId}><span className="LogTitle">{this.title}</span>{this.content}</p>
     }
 
