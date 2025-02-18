@@ -82,6 +82,13 @@
     color: var(--text-base-color);
     box-sizing:border-box;
     clip-path: polygon(25% 0,75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+}
 
-    
+#optionPath{
+    &:empty{
+        display: none;
+    }
+    font-size: 0.6em;
+    margin-bottom: -1em;
+    margin-top: -1.5em;
 }

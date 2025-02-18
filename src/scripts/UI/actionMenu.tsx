@@ -1,42 +1,50 @@
-import { atom, useAtom, PrimitiveAtom, useSetAtom, useAtomValue, } from 'jotai';
+import { atom, useAtom, PrimitiveAtom, useSetAtom, useAtomValue, createStore, Provider } from 'jotai';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { selectAtom,splitAtom  } from "jotai/utils";
 import { Controller } from '../controller';
 import {TodoList, TestList} from "./jotaiTest"
+import {ArrowLeftOutlined} from "@ant-design/icons"
+import { Space } from 'antd';
 
 type SetAtomList<T> = ReturnType<typeof useSetAtom<PrimitiveAtom<PrimitiveAtom<T>[]>>>;
+
+//TODO: Cleanup file
 
 /**Renders the action menu */
 export class ActionMenu{
     /**List with the options in the menu */
-    optionList:string[]=["Actions","Stats","Config"];
-
-    /**"Path" of the previously chosen options */
-    optionsPath="";
-    
-    /**List of the atoms of the options */
-    listAtom:PrimitiveAtom<PrimitiveAtom<string>[]>= null;
-
-    /**Function to set the state of {@link listAtom} */
-    private actionSetAtom:SetAtomList<string>=null;
-
-    /**Refreshes the action menu display after making changes */
-    refresh(){
-        this.actionSetAtom ??= useSetAtom(this.listAtom)
-        this.actionSetAtom((prev)=>{
-            
-            return this.getOptionAtoms(prev) //Changes reference to force reload
-        });
+    get optionList(){
+        return this.store?.get(this.optListAtom).map( at => this.store.get(at))
+    }
+    set optionList(value){
+        this.store?.set(this.optListAtom, prev =>  this.getOptionAtoms(prev,value))
     }
 
-    getOptionAtoms(prev:PrimitiveAtom<string>[]){
+    /**List of the atoms of the options */
+    optListAtom:PrimitiveAtom<PrimitiveAtom<string>[]>= atom([]);
+
+    /**Atom of {@link optPath} */
+    optPath:PrimitiveAtom<string>=atom("");
+
+    /**Jotai store */
+    store = createStore()
+
+    constructor(){
+        this.store.set(this.optPath, "")
+        this.store.set(this.optListAtom, [])
+    }
+
+   
+
+    getOptionAtoms(prev:PrimitiveAtom<string>[], values:string[]){
         let list = [...prev];
         //Get shortened/elongated list
-        list.length = this.optionList.length;
+        list.length = values.length;
         //Fill holes
         for(let i=0; i<list.length; i++){
-            list[i] ??= atom(this.optionList[i])
+            list[i] ??= atom(values[i])
+            this.store.set(list[i],values[i]) //Register atom
         }
         return list;
     }
@@ -50,6 +58,7 @@ export class ActionMenu{
         let menu= document.getElementById("sideMenu");
         if(menu!=null){
             let instance = new ActionMenu()
+            //TODO: relocate initialization
             Controller.instance.menu = instance;
             let root = createRoot(menu);
             root.render(React.createElement(instance.toHTML))            
@@ -58,24 +67,37 @@ export class ActionMenu{
 
     
 
-    toHTML=()=>{
-        //Initialize with current value
-        this.listAtom ??=atom(this.getOptionAtoms([]));
+    toHTML=()=>{        
 
-        let setList = this.actionSetAtom = useSetAtom(this.listAtom);
-        let [splitUse]=useAtom(this.listAtom);
-        let add =()=>{
-            setList((prev)=>[...prev, atom("aaa")])
-        }
-        return splitUse.map( (action,index)=>{
-                return <InputButton atom={action} key={index}/>
-        })
+        return <Provider store={this.store}>
+        <PathDescriptor atom={this.optPath}/>
+            <AllActionButtons atom={this.optListAtom}/>
+        </Provider>
     }
 }
 
 
 //TODO: Move Input button creation
-function InputButton({atom}){
+/**Creates all the action buttons */
+function AllActionButtons({atom}:{atom:PrimitiveAtom<PrimitiveAtom<string>[]>}){
+    let [options]=useAtom(atom)//this.store.get(this.optListAtom);
+    return options.map( (action,index)=>{
+        return <ActionButton atom={action} key={index}/>
+    })
+}
+
+/**Creates the input button for the menu */
+function ActionButton({atom}:{atom:PrimitiveAtom<string>}){
     let [actionUse] = useAtom(atom);
     return <input type="button" className="optionButton" value={actionUse as string}/>
+}
+
+
+function PathDescriptor({atom}:{atom:PrimitiveAtom<string>}){
+    let [value] = useAtom(atom);
+
+    return <span id="optionPath">{value} { //Draw return arrow
+        value!=""?<Space><ArrowLeftOutlined/></Space>
+        :<></>
+    }</span>
 }
