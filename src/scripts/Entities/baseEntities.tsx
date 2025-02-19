@@ -2,6 +2,8 @@ import { House } from "./house";
 import { Room } from "./room";
 import { IRenderEl } from "../UI/IRenderEl";
 import { renderToString } from "react-dom/server";
+import { Provider } from "jotai";
+import { Character } from './character';
 
 
 /**Parameter signature of the base entity */
@@ -39,7 +41,11 @@ export class BaseEntity implements IRenderEl{
         return <span style={{color:this.nameColor}}>{this.name}</span>
     }
 
-    toHTMLString():string {
+    toRender(){
+        return this.toHtml();
+    }
+
+    toHtmlString():string {
         return renderToString(this.toHtml());
     }
 }
@@ -103,6 +109,15 @@ export class LocalEntity extends BaseEntity{
             this.currentLocation.removeEntity(this);
         }
         
+    }
+
+    toRender(){
+        let type = "localRender";
+        if(this instanceof Character)
+            type+=" characterRender"
+        return <Provider>
+            <div className={type} data-name={this.toString()}></div>
+        </Provider>
     }
 }
 

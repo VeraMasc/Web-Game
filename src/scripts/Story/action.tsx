@@ -18,10 +18,14 @@ export class Action implements IRenderEl{
         throw new Error("Method not implemented.");
     }
 
+    toRender(){
+        return this.toHtml();
+    }
+
     toString(): string {
         throw new Error("Method not implemented.");
     }
-    toHTMLString():string {
+    toHtmlString():string {
         return renderToString(this.toHtml());
     }
 }

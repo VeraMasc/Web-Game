@@ -1,0 +1,55 @@
+//Holds the styles for the rendering of entities in game world
+
+//Render of a local entity
+.localRender{
+    aspect-ratio: 1;
+    display: block;
+    width: 1.5em;
+    background-color: gray;
+    border-radius: 100%;
+    margin: 0.1em;
+    z-index: 1;
+    &:hover::after{
+        position: relative;
+        content: attr(data-name);
+        display: inline-block;
+        background-color: var(--bg-alt-color);
+        left: 0.5em;
+        bottom:  0.3em;
+        padding: 0.1em 0.2em;
+        border-radius: 0.3em;
+    }
+}
+
+.characterRender{
+    
+}
+
+
+.houseRender{
+    display: block;
+    >.content{
+        display: grid;
+    }
+
+}
+
+.roomRender{
+    display: block;
+    border: 2px blue solid;
+    min-height: 3em;
+    >span{
+        position: absolute;
+    }
+
+    >.content{
+        display: flex;
+        flex-wrap: wrap-reverse;
+        align-items:end;
+        justify-content: end;
+        height: 100%;
+    }
+}
+
+
+

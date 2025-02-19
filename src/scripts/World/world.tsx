@@ -6,6 +6,7 @@ import preset from "../Entities/Presets/presets";
 import { baseHouse } from "../Entities/Presets/housePresets";
 import { Player } from '../Entities/player';
 import { GameTime } from './time';
+import { Provider } from 'jotai';
 
 
 
@@ -50,4 +51,6 @@ export class World{
         new Character({name:"TestNPC 2", location:room})
 
     }
+
+    
 }

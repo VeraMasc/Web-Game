@@ -1,4 +1,4 @@
 import { Interactable } from "../interactable";
 
 
-export var shower = ()=> new Interactable({name:"shower"})
+export var shower = ()=> new Interactable({name:"Shower"})

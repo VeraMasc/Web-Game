@@ -3,6 +3,7 @@ import { EventLog } from './UI/eventLog';
 import React from 'react';
 import { World } from './World/world';
 import { ActionMenu } from './UI/actionMenu';
+import { RenderWorld } from './UI/woldMap';
 
 
 /**Core class that manages all the other game elements */
@@ -35,11 +36,12 @@ export class Controller{
             let entries = React.createElement(EventLog);
             root.render(entries)            
         }
+        
 
-        //TODO: Remove temporary fix
+        //TODO: Remove temporary fix (Use jotai store)
         setTimeout(() => {EventLog.instance.addRaw("Start")
             EventLog.instance.addRaw((<span><b>BOLD</b> & <small>small</small></span>))
-        });
+        },200);
         
         //Create action menu
         ActionMenu.create()
@@ -48,7 +50,18 @@ export class Controller{
         new World();
         
         
-        setTimeout(() => {World.instance.generate()});
+        setTimeout(() => {World.instance.generate()
+
+            //Create World screen
+            let screen= document.getElementById("screen");
+            if(screen!=null){
+                let root = createRoot(screen);
+                let entries = React.createElement(RenderWorld);
+                root.render(entries)            
+            }
+
+        });
+        
     }
 
 }

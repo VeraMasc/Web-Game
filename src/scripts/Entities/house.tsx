@@ -2,6 +2,7 @@ import { BaseEntity } from "./baseEntities";
 import { Interactable } from "./interactable";
 import { Room } from "./room";
 import { Door } from './door';
+import { Provider } from "jotai";
 
 /**Holds and manages the different environments of the house */
 export class House extends BaseEntity{
@@ -61,10 +62,20 @@ export class House extends BaseEntity{
             let points = d.points;
             let [pointA, pointB] = Door.remapPoints(points,rMap);
             let newDoor = new Door({pointA, pointB});
-                
         }
-        
         return newHouse;
+    }
+
+    toRender(){
+        //TODO: Use store for house render
+        //TODO: Figure out Room distribution?
+        return <Provider>
+            <div className="houseRender">
+                <div className="content">
+                    {[...this.rooms].map(r => r.toRender())}
+                </div>
+            </div>
+        </Provider>
     }
 }
 

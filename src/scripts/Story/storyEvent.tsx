@@ -19,13 +19,17 @@ export class StoryEvent implements IRenderEl{
     /**Message to print in the log when the event triggers */
     message: (event:StoryEvent,context)=>string;
 
+    toRender(){
+        return this.toHtml();
+    }
+
     toHtml(): JSX.Element {
         throw new Error("Method not implemented.");
     }
     toString(): string {
         throw new Error("Method not implemented.");
     }
-    toHTMLString():string {
+    toHtmlString():string {
         return renderToString(this.toHtml());
     }
 }

@@ -1,3 +1,4 @@
+import { Provider } from "jotai";
 import { BaseEntity, LocalEntity, BaseEntityParams } from "./baseEntities";
 import { Character } from "./character";
 import { Door, RoomRef } from "./door";
@@ -102,5 +103,18 @@ export class Room extends BaseEntity {
             this.doors.add(new Door({ pointA: this, pointB: r }));
         }
         return this;
+    }
+
+    toRender(){
+        //TODO: Use store for room render
+        //TODO: Render doors?
+        return <Provider>
+            <div className="roomRender">
+                {this.toHtml()}
+                <div className="content">
+                    {this.localEntities.map(l => l.toRender())}
+                </div>
+            </div>
+        </Provider>
     }
 }
