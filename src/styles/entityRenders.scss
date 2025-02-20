@@ -5,12 +5,15 @@
     aspect-ratio: 1;
     display: block;
     position: relative;
-    width: 1.5em;
-    height: 1.5em;
+    width: 1.75em;
+    height: 1.75em;
     background-color: gray;
     border-radius: 100%;
     margin: 0.1em;
     z-index: 1;
+    >img{
+        padding: 15%;
+    }
     &:hover::after{
         z-index: 1;
         position: absolute;

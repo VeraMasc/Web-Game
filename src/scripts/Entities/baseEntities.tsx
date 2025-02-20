@@ -8,7 +8,7 @@ import { JSX } from "react";
 
 
 /**Parameter signature of the base entity */
-export type BaseEntityParams= {name:string, nameColor?:string, icon?:JSX.Element};
+export type BaseEntityParams= {name:string, nameColor?:string, icon?:string};
 
 /**Encompasses all elements that exist withtin the game world */
 export class BaseEntity implements IRenderEl{
@@ -19,7 +19,7 @@ export class BaseEntity implements IRenderEl{
     nameColor?:string;
 
     /**Icon of the Entity */
-    icon?:JSX.Element
+    icon?:string
 
     constructor({name, nameColor, icon}:BaseEntityParams|BaseEntity){
         this.nameAs({name,nameColor})
@@ -124,7 +124,9 @@ export class LocalEntity extends BaseEntity{
         if(this instanceof Character)
             type+=" characterRender"
         return <Provider key={key}>
-            <div className={type}  data-name={this.toString()}>{this.icon}</div>
+            <div className={type}   data-name={this.toString()}>
+                <img src={this.icon}></img>
+            </div>
         </Provider>
     }
 }
