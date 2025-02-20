@@ -8,8 +8,8 @@ export class Interactable extends LocalEntity{
     /**Who owns (and therefore uses) the object*/
     owners:Character[]=[]
 
-    constructor({name,nameColor,location}:LocalEntityParams){
-            super({name,nameColor,location})
+    constructor({name,nameColor,location, icon, ...args}:LocalEntityParams){
+            super({name,nameColor,location, icon, ...args})
       
     }
 }

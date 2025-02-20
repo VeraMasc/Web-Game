@@ -4,10 +4,11 @@ import { IRenderEl } from "../UI/IRenderEl";
 import { renderToString } from "react-dom/server";
 import { Provider } from "jotai";
 import { Character } from './character';
+import { JSX } from "react";
 
 
 /**Parameter signature of the base entity */
-export type BaseEntityParams= {name:string, nameColor?:string};
+export type BaseEntityParams= {name:string, nameColor?:string, icon?:JSX.Element};
 
 /**Encompasses all elements that exist withtin the game world */
 export class BaseEntity implements IRenderEl{
@@ -15,10 +16,14 @@ export class BaseEntity implements IRenderEl{
     name:string;
 
     /**Display color of the entity's name */
-    nameColor:string;
+    nameColor?:string;
 
-    constructor({name, nameColor}:BaseEntityParams|BaseEntity){
+    /**Icon of the Entity */
+    icon?:JSX.Element
+
+    constructor({name, nameColor, icon}:BaseEntityParams|BaseEntity){
         this.nameAs({name,nameColor})
+        this.icon = icon;
     }
 
     /**Clones the current entity */
@@ -41,7 +46,7 @@ export class BaseEntity implements IRenderEl{
         return <span style={{color:this.nameColor}}>{this.name}</span>
     }
 
-    toRender(){
+    toRender(key?){
         return this.toHtml();
     }
 
@@ -55,7 +60,7 @@ type EntityConstructor<T extends BaseEntity> = {new (arg:T):T}
 
 
 /**Parameter signature of local entities */
-export type LocalEntityParams= {location?:Room} & BaseEntityParams
+export type LocalEntityParams= {location?:Room, } & BaseEntityParams
 
 /**Entities that occupy locations in the world and can move through it */
 export class LocalEntity extends BaseEntity{
@@ -67,8 +72,11 @@ export class LocalEntity extends BaseEntity{
          return this._currentLocation
     }
 
-    constructor({location, ...args}:LocalEntityParams){
+    
+
+    constructor({location,  ...args}:LocalEntityParams){
         super(args)
+        
         if(location)
             this.jumpTo(location, true);
     }
@@ -111,12 +119,12 @@ export class LocalEntity extends BaseEntity{
         
     }
 
-    toRender(){
+    toRender(key?){
         let type = "localRender";
         if(this instanceof Character)
             type+=" characterRender"
-        return <Provider>
-            <div className={type} data-name={this.toString()}></div>
+        return <Provider key={key}>
+            <div className={type}  data-name={this.toString()}>{this.icon}</div>
         </Provider>
     }
 }

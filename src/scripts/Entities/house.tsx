@@ -66,13 +66,13 @@ export class House extends BaseEntity{
         return newHouse;
     }
 
-    toRender(){
+    toRender(key?){
         //TODO: Use store for house render
         //TODO: Figure out Room distribution?
-        return <Provider>
-            <div className="houseRender">
+        return <Provider key={key}>
+            <div className="houseRender" >
                 <div className="content">
-                    {[...this.rooms].map(r => r.toRender())}
+                    {[...this.rooms].map((r,i) => r.toRender(i))}
                 </div>
             </div>
         </Provider>

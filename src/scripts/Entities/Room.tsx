@@ -105,14 +105,14 @@ export class Room extends BaseEntity {
         return this;
     }
 
-    toRender(){
+    toRender(key?){
         //TODO: Use store for room render
         //TODO: Render doors?
-        return <Provider>
-            <div className="roomRender">
+        return <Provider key={key}>
+            <div className="roomRender" >
                 {this.toHtml()}
                 <div className="content">
-                    {this.localEntities.map(l => l.toRender())}
+                    {this.localEntities.map((l,i) => l.toRender(i))}
                 </div>
             </div>
         </Provider>

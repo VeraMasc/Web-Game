@@ -4,20 +4,24 @@
 .localRender{
     aspect-ratio: 1;
     display: block;
+    position: relative;
     width: 1.5em;
+    height: 1.5em;
     background-color: gray;
     border-radius: 100%;
     margin: 0.1em;
     z-index: 1;
     &:hover::after{
-        position: relative;
+        z-index: 1;
+        position: absolute;
         content: attr(data-name);
         display: inline-block;
         background-color: var(--bg-alt-color);
-        left: 0.5em;
-        bottom:  0.3em;
+        left: calc(100% - 1em);
+        top: -1em;
         padding: 0.1em 0.2em;
         border-radius: 0.3em;
+        margin-bottom: -100%;
     }
 }
 
