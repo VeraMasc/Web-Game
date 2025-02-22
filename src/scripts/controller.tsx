@@ -5,6 +5,7 @@ import { World } from './World/world';
 import { ActionMenu } from './UI/actionMenu';
 import { RenderWorld } from './UI/woldMap';
 import { BaseScreen } from './UI/UI';
+import { getDefaultStore } from 'jotai';
 
 
 /**Core class that manages all the other game elements */
@@ -18,6 +19,9 @@ export class Controller{
 
     /**Gets the event log */
     get log() {return EventLog.instance;}
+
+    /**Retrieves the default jotai store. Use only for debugging */
+    get defaultStore(){return getDefaultStore()}
 
     menu:ActionMenu;
 

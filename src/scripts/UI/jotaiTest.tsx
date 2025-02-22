@@ -30,6 +30,7 @@ const TodoItem = ({ atom, remove }: TodoItemProps) => {
   const [item, setItem] = useAtom(atom)
   const toggleCompleted = () =>
     setItem((props) => ({ ...props, completed: !props.completed }))
+  console.log(`Rendering todo: ${item.title}`)
   return (
     <>
       <input

@@ -57,10 +57,10 @@ export class ActionMenu{
     
 
     toHTML=()=>{        
-
+        //<AllActionButtons atom={this.optListAtom}/>
         return <Provider store={this.store}>
         <PathDescriptor atom={this.optPath}/>
-            <AllActionButtons atom={this.optListAtom}/>
+            <TodoList></TodoList>
         </Provider>
     }
 }
@@ -78,6 +78,7 @@ function AllActionButtons({atom}:{atom:PrimitiveAtom<PrimitiveAtom<string>[]>}){
 /**Creates the input button for the menu */
 function ActionButton({atom}:{atom:PrimitiveAtom<string>}){
     let [actionUse] = useAtom(atom);
+    console.log(`Rerendering Button: ${actionUse}`)
     return <input type="button" className="optionButton" value={actionUse as string}/>
 }
 
