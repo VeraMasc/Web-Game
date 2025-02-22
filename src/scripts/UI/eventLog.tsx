@@ -1,7 +1,7 @@
-import React, {useState,JSX} from "react"
+import React, {useState,JSX, Children, memo} from "react"
 import { renderToString } from 'react-dom/server';
-import { selectAtom } from "jotai/utils";
-import { atom, useAtom, PrimitiveAtom, useSetAtom, useAtomValue, createStore, Provider, getDefaultStore } from 'jotai';
+import { selectAtom, splitAtom } from 'jotai/utils';
+import { atom, useAtom, PrimitiveAtom, useSetAtom, useAtomValue, createStore, Provider, getDefaultStore, Atom } from 'jotai';
 import { ErrorBoundary } from "./UIutils";
 
 const defaultStore = getDefaultStore()
@@ -18,7 +18,8 @@ export class EventLog extends React.Component {
     
 
     /**List of all the entries*/
-    entries:PrimitiveAtom<PrimitiveAtom<LogEntry>[]> = atom([atom(new LogEntry("Test"))]);
+    entries:PrimitiveAtom<LogEntry[]> = atom([new LogEntry("Test")]);
+    splitEntries = splitAtom(this.entries);
 
     /**Jotai store */
     store = createStore()
@@ -34,7 +35,7 @@ export class EventLog extends React.Component {
 
     /**Adds a new entry to the log */
     add = (entry:LogEntry)=>{
-        this.store.set(this.entries, (prev)=> [...prev, atom(entry)])
+        this.store.set(this.entries, (prev)=> [...prev, entry])
     }
 
     /**Adds a new simple text/jsx entry*/
@@ -43,13 +44,23 @@ export class EventLog extends React.Component {
     }
     /**Sets all logs form a list*/
     set(list:LogEntry[]){
-        let mapped = list.map(e => atom(e))
-        this.store.set(this.entries, (prev)=> [...mapped])
+        // let mapped = list.map(e => atom(e))
+        this.store.set(this.entries, (prev)=> [...list])
     }
     /**Sets all logs form a list of text/jsx entry */
     setRaw(list:{text:string|JSX.Element, title?:string}[]){
         let mapped = list.map(({text, title})=>new LogEntry(text, title))
         this.set(mapped)
+    }
+
+    /**Sets all logs form a list of text/jsx entry */
+    setRawIndex(index:number,text:string|JSX.Element, title?:string){
+        let entry = new LogEntry(text, title);
+
+        this.store.set(this.entries, (prev)=> {
+            prev[index] = entry;
+            return [...prev];
+        })
     }
 
     render() {
@@ -58,22 +69,26 @@ export class EventLog extends React.Component {
 
     toHtml=()=>{
         
-        //TODO: add keys
-
         
+
 
         // console.log(renderToString(ret));
         return <Provider store={this.store}>
                 <ErrorBoundary>
-                    <div id="eventLog"><this.RenderLogs list={this.entries}/></div>
+                    <div id="eventLog"><EventLog.RenderLogsWrap list={this.splitEntries}/></div>
                 </ErrorBoundary>
             </Provider>
     }
 
     //TODO: Polish Jotai rendering calls
-    RenderLogs({list}:{list:PrimitiveAtom<PrimitiveAtom<LogEntry>[]>}){
-        let [value] = useAtom(list);
-        return value.map(v =>  <LogEntry.AtomRender logAtom={v} />);
+    static RenderLogs({ children}:{children:Atom<LogEntry>[]}){
+        console.log(children.map(v => v.toString()));
+        return children.map(v =>  <LogEntry.AtomRender logAtom={v} key={v.toString()} />);
+    }
+
+    static RenderLogsWrap({list}:{list:Atom<Atom<LogEntry>[]>}){
+        let value = useAtomValue(list);
+        return <EventLog.RenderLogs children={value}/>
     }
     
 
@@ -107,7 +122,7 @@ export class LogEntry {
     toHtml() {
         console.log(`Re-rendering "${this.content}"`)
         return <ErrorBoundary>
-                <p className="LogEntry" key={this.logId}><span className="LogTitle">{this.title}</span>{this.content}</p>
+                <p className="LogEntry" ><span className="LogTitle">{this.title}</span>{this.content}</p>
             </ErrorBoundary>    
     }
 
@@ -115,12 +130,17 @@ export class LogEntry {
         return renderToString(this.toHtml());
     }
 
-    static AtomRender({logAtom}:{logAtom:PrimitiveAtom<LogEntry>}){
+    static AtomRender= memo(function({logAtom}:{logAtom:Atom<LogEntry>}){
         let [value] = useAtom(logAtom);
-        value.logAtom ??= logAtom;
+        
         console.log(value);
 
-        return value?.toHtml()
+        return <LogEntry.AtomRenderInner entry={value}/>
+    })
+
+    static AtomRenderInner = function({entry}:{entry:LogEntry}){
+        
+        return entry?.toHtml()
     }
 
 }
