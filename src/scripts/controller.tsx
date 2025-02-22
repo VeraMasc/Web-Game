@@ -4,6 +4,7 @@ import React from 'react';
 import { World } from './World/world';
 import { ActionMenu } from './UI/actionMenu';
 import { RenderWorld } from './UI/woldMap';
+import { BaseScreen } from './UI/UI';
 
 
 /**Core class that manages all the other game elements */
@@ -29,38 +30,24 @@ export class Controller{
     init(){
         console.log("%c Initializing Game ",'background: #318131;');
 
-        //Create event Log
-        let log= document.getElementById("eventLog");
-        if(log!=null){
-            let root = createRoot(log);
-            let entries = React.createElement(EventLog);
-            root.render(entries)            
+        // //Create event Log
+        let screen= document.getElementById("screenContainer");
+        if(screen!=null){
+            let root = createRoot(screen);
+            let entries = React.createElement(BaseScreen);
+            root.render(entries);            
         }
         
 
-        //TODO: Remove temporary fix (Use jotai store)
-        setTimeout(() => {EventLog.instance.addRaw("Start")
-            EventLog.instance.addRaw((<span><b>BOLD</b> & <small>small</small></span>))
-        },200);
+        // //TODO: Remove temporary fix (Use jotai store)
+        // setTimeout(() => {EventLog.instance.addRaw("Start")
+        //     EventLog.instance.addRaw((<span><b>BOLD</b> & <small>small</small></span>))
+        // },200);
         
-        //Create action menu
-        ActionMenu.create()
-        
-        //Generate world
-        new World();
+        // //Create action menu
+        // ActionMenu.create()
         
         
-        setTimeout(() => {World.instance.generate()
-
-            //Create World screen
-            let screen= document.getElementById("screen");
-            if(screen!=null){
-                let root = createRoot(screen);
-                let entries = React.createElement(RenderWorld);
-                root.render(entries)            
-            }
-
-        });
         
     }
 

@@ -13,18 +13,24 @@
     z-index: 1;
     >img{
         padding: 15%;
+        aaacolor: rgb(245, 232, 159);
     }
-    &:hover::after{
-        z-index: 1;
-        position: absolute;
-        content: attr(data-name);
-        display: inline-block;
-        background-color: var(--bg-alt-color);
-        left: calc(100% - 1em);
-        top: -1em;
-        padding: 0.1em 0.2em;
-        border-radius: 0.3em;
-        margin-bottom: -100%;
+    
+    &:hover{
+        z-index: 10;
+
+        &::after{
+            
+            position: absolute;
+            content: attr(data-name);
+            display: inline-block;
+            background-color: var(--bg-alt-color);
+            left: calc(100% - 1em);
+            top: -1em;
+            padding: 0.1em 0.2em;
+            border-radius: 0.3em;
+            margin-bottom: -100%;
+        }
     }
 }
 
@@ -37,6 +43,7 @@
     display: block;
     >.content{
         display: grid;
+        gap: 0.5em;
     }
 
 }

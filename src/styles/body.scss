@@ -1,4 +1,8 @@
 //Handles the syling of the body and main canvas elements
+html {
+    height: 100%;
+  }
+
 body {
 
     background-color: black;
@@ -17,6 +21,7 @@ body {
 
     /* Allow canvas to hit the edges of the browser viewport. */
     margin: 0;
+    height: 100%;
 
 }
 

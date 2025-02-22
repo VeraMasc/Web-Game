@@ -32,7 +32,8 @@ export class ActionMenu{
 
     constructor(){
         this.store.set(this.optPath, "")
-        this.store.set(this.optListAtom, [])
+        this.store.set(this.optListAtom, this.getOptionAtoms([],[ "Actions", "Stats", "Config"]))
+        Controller.instance.menu = this;
     }
 
    
@@ -52,19 +53,7 @@ export class ActionMenu{
     
    
 
-    static create(){
-        //TODO: Prevent side menu from instancing twice
-        //Create action menu
-        let menu= document.getElementById("sideMenu");
-        if(menu!=null){
-            let instance = new ActionMenu()
-            //TODO: relocate initialization
-            Controller.instance.menu = instance;
-            let root = createRoot(menu);
-            root.render(React.createElement(instance.toHTML))            
-        }
-    }
-
+    
     
 
     toHTML=()=>{        
