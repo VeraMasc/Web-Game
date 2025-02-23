@@ -49,20 +49,12 @@ export class ActionMenu{
         }
         return list;
     }
-
-    
-   
-
-    
     
 
-    toHTML=()=>{        
-        //<AllActionButtons atom={this.optListAtom}/>
-        return <Provider store={this.store}>
-        <PathDescriptor atom={this.optPath}/>
-            <TodoList></TodoList>
+    toHTML=()=><Provider store={this.store}>
+            <PathDescriptor atom={this.optPath}/>
+            <AllActionButtons atom={this.optListAtom}/>
         </Provider>
-    }
 }
 
 

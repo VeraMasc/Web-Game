@@ -2,7 +2,8 @@ import React, {useState,JSX, Children, memo} from "react"
 import { renderToString } from 'react-dom/server';
 import { selectAtom, splitAtom } from 'jotai/utils';
 import { atom, useAtom, PrimitiveAtom, useSetAtom, useAtomValue, createStore, Provider, getDefaultStore, Atom } from 'jotai';
-import { ErrorBoundary } from "./UIutils";
+import { CatchError, escapeLogStrings, ExposedTyped } from './UIutils';
+import { ReactTyped, Typed } from "react-typed";
 
 const defaultStore = getDefaultStore()
 
@@ -15,14 +16,12 @@ export class EventLog extends React.Component {
 
     private static _instance:EventLog=null;
 
-    
 
     /**List of all the entries*/
     entries:PrimitiveAtom<LogEntry[]> = atom([new LogEntry("Test")]);
-    splitEntries = splitAtom(this.entries);
 
-    /**Jotai store */
-    store = createStore()
+    /**Split atom version of {@link entries} */
+    private splitEntries = splitAtom(this.entries);
 
     
     constructor(props={}){
@@ -35,29 +34,33 @@ export class EventLog extends React.Component {
 
     /**Adds a new entry to the log */
     add = (entry:LogEntry)=>{
-        this.store.set(this.entries, (prev)=> [...prev, entry])
+        defaultStore.set(this.entries, (prev)=> [...prev, entry])
     }
 
     /**Adds a new simple text/jsx entry*/
-    addRaw(text:string|JSX.Element, title?:string){
+    addRaw(text:string, title?:string){
         this.add(new LogEntry(text, title))
     }
     /**Sets all logs form a list*/
     set(list:LogEntry[]){
         // let mapped = list.map(e => atom(e))
-        this.store.set(this.entries, (prev)=> [...list])
+        defaultStore.set(this.entries, (prev)=> [...list])
     }
     /**Sets all logs form a list of text/jsx entry */
-    setRaw(list:{text:string|JSX.Element, title?:string}[]){
+    setRaw(list:{text:string, title?:string}[]){
         let mapped = list.map(({text, title})=>new LogEntry(text, title))
         this.set(mapped)
     }
+    /**Clears the entire Log List */
+    clear(){
+        this.set([])
+    }
 
     /**Sets all logs form a list of text/jsx entry */
-    setRawIndex(index:number,text:string|JSX.Element, title?:string){
+    setRawIndex(index:number,text:string, title?:string){
         let entry = new LogEntry(text, title);
 
-        this.store.set(this.entries, (prev)=> {
+        defaultStore.set(this.entries, (prev)=> {
             prev[index] = entry;
             return [...prev];
         })
@@ -65,82 +68,93 @@ export class EventLog extends React.Component {
 
     render() {
         return this.toHtml();
-      }
-
-    toHtml=()=>{
-        
-        
-
-
-        // console.log(renderToString(ret));
-        return <Provider store={this.store}>
-                <ErrorBoundary>
-                    <div id="eventLog"><EventLog.RenderLogsWrap list={this.splitEntries}/></div>
-                </ErrorBoundary>
-            </Provider>
     }
 
-    //TODO: Polish Jotai rendering calls
-    static RenderLogs({ children}:{children:Atom<LogEntry>[]}){
-        console.log(children.map(v => v.toString()));
-        return children.map(v =>  <LogEntry.AtomRender logAtom={v} key={v.toString()} />);
-    }
+    toHtml= ()=> <CatchError>
+            <div id="fullLog">
+                <div id="eventLogList"><RenderLogsList list={this.splitEntries}/></div>
+                <div id="eventOptions"></div>
+            </div>
+        </CatchError>            
 
-    static RenderLogsWrap({list}:{list:Atom<Atom<LogEntry>[]>}){
-        let value = useAtomValue(list);
-        return <EventLog.RenderLogs children={value}/>
-    }
-    
+}
 
+/**Renders a list of logs from an atom list of atoms */
+function RenderLogsList({list}:{list:Atom<Atom<LogEntry>[]>}){
+    let value = useAtomValue(list);
+    return value.map(v =>  <LogMemoComponent logAtom={v} key={v.toString()} />);
 }
 
 /**Entry of the log*/
 export class LogEntry {
-    /**Unique ID of the log */
-    logId:string;
-    logAtom:PrimitiveAtom<LogEntry> =null;
     
-
     /**
      * @param content Text of the entry
      * @param title Title of the entry (describes the type of entry)
      */
-    constructor(public content:string|JSX.Element, public title:string=""){
-        this.logId=crypto.randomUUID();
+    constructor(public content:string, public title:string=""){
+        
     }
 
     toString():string {
-        var str:string;
-        if(typeof this.content === "string"){
-            str = this.content
-        }else{
-            str = renderToString(this.content);
-        }
-        return `${this.title}: ${str}`;
+        let isString=typeof this.content === "string";
+        return `${this.title}: ${isString? this.content : renderToString(this.content)}`;
     }
 
-    toHtml() {
-        console.log(`Re-rendering "${this.content}"`)
-        return <ErrorBoundary>
-                <p className="LogEntry" ><span className="LogTitle">{this.title}</span>{this.content}</p>
-            </ErrorBoundary>    
-    }
+}
 
-    toHtmlString():string {
-        return renderToString(this.toHtml());
-    }
+/**Renders a LogEntry from a memoized atom */
+var LogMemoComponent= memo(function({logAtom}:{logAtom:Atom<LogEntry>}){
+    let [value] = useAtom(logAtom); // console.log(value);
+    return <LogComponent log={value}/>
+})
 
-    static AtomRender= memo(function({logAtom}:{logAtom:Atom<LogEntry>}){
-        let [value] = useAtom(logAtom);
+/**Renders a LogEntry in react */
+function LogComponent({log}:{log:LogEntry}){
         
-        console.log(value);
+    return <CatchError>
+        <p className="LogEntry" >
+            <span className="LogTitle">{log.title}</span>
+            <ReactTyped strings={[log.content]} typeSpeed={20} onBegin={onLogTypingBegin} ></ReactTyped>
+        </p>
+    </CatchError>  
+}
 
-        return <LogEntry.AtomRenderInner entry={value}/>
-    })
 
-    static AtomRenderInner = function({entry}:{entry:LogEntry}){
-        
-        return entry?.toHtml()
+/**Stores the previous log that has started typing */
+var previousLog:Typed=null;
+
+/**Close previous log when beginning to write a new one */
+function onLogTypingBegin(self:Typed){
+    console.log(self);
+    (window as any).typed= self;
+    closeLastLog()
+    previousLog = self;
+}
+/**"Closes" the last log */
+export function closeLastLog(){
+    if (previousLog!=null){
+        closeLogTyping(previousLog);
     }
+}
 
+/**"Closes" the typing animation */
+function closeLogTyping(self:Typed){
+    if(self==null)
+        return;
+    let exposed = self as unknown as ExposedTyped;
+    exposed.stop();
+    let rawtext = (self as any).strings[0];
+    let parsed = escapeLogStrings(rawtext)
+    
+    if(self.cursor)
+        self.cursor.hidden=true;
+
+    if(exposed.el.innerHTML.length != parsed.length)
+        exposed.replaceText(parsed)
+    
+    //Prevent Typed from changing value after setting it
+    exposed.el = document.createElement("div"); 
+    exposed.typingComplete=true;
+    
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { ActionMenu } from './actionMenu';
 import { EventLog } from './eventLog';
-import { ErrorBoundary } from "./UIutils";
+import { CatchError } from "./UIutils";
 
 /**Base game screen component */
 export function BaseScreen(){
@@ -11,7 +11,6 @@ export function BaseScreen(){
     return [<div id="sideMenu">
         <menu.toHTML/>
     </div>,
-    <ErrorBoundary>
-        <log.toHtml/>
-    </ErrorBoundary>]
+    <log.toHtml/>]
+   
 }
