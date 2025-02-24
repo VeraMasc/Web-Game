@@ -18,7 +18,7 @@ export class EventLog extends React.Component {
 
 
     /**List of all the entries*/
-    entries:PrimitiveAtom<LogEntry[]> = atom([new LogEntry("Test")]);
+    entries:PrimitiveAtom<LogEntry[]> = atom([]);
 
     /**Split atom version of {@link entries} */
     private splitEntries = splitAtom(this.entries);
@@ -43,6 +43,7 @@ export class EventLog extends React.Component {
     }
     /**Sets all logs form a list*/
     set(list:LogEntry[]){
+        //TODO: Fix rendering (typing) bugs when setting existing entries
         // let mapped = list.map(e => atom(e))
         defaultStore.set(this.entries, (prev)=> [...list])
     }
@@ -70,10 +71,17 @@ export class EventLog extends React.Component {
         return this.toHtml();
     }
 
+    //TODO: Add way to move optionselection
+    //TODO: Add actual option rendering
     toHtml= ()=> <CatchError>
             <div id="fullLog">
                 <div id="eventLogList"><RenderLogsList list={this.splitEntries}/></div>
-                <div id="eventOptions"></div>
+                <div id="eventOptions">
+                    <ul>
+                        <li tabIndex={0}>Test option 1</li>
+                        <li tabIndex={0}>Test option 2</li>
+                    </ul>
+                </div>
             </div>
         </CatchError>            
 
@@ -111,11 +119,12 @@ var LogMemoComponent= memo(function({logAtom}:{logAtom:Atom<LogEntry>}){
 
 /**Renders a LogEntry in react */
 function LogComponent({log}:{log:LogEntry}){
+    let hasTitle = log.title?.length>0;
         
     return <CatchError>
         <p className="LogEntry" >
-            <span className="LogTitle">{log.title}</span>
-            <ReactTyped strings={[log.content]} typeSpeed={20} onBegin={onLogTypingBegin} ></ReactTyped>
+            {hasTitle? <span className="LogTitle"  dangerouslySetInnerHTML={{__html:log.title}}></span> :null}
+            <ReactTyped strings={[log.content]} cursorChar="▌" typeSpeed={20} onBegin={onLogTypingBegin} ></ReactTyped>
         </p>
     </CatchError>  
 }
@@ -147,12 +156,12 @@ function closeLogTyping(self:Typed){
     let rawtext = (self as any).strings[0];
     let parsed = escapeLogStrings(rawtext)
     
-    if(self.cursor)
-        self.cursor.hidden=true;
+    // if(self.cursor)
+    //     self.cursor.hidden=true;
 
     if(exposed.el.innerHTML.length != parsed.length)
         exposed.replaceText(parsed)
-    
+
     //Prevent Typed from changing value after setting it
     exposed.el = document.createElement("div"); 
     exposed.typingComplete=true;

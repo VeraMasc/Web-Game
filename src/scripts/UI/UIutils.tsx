@@ -53,3 +53,6 @@ type ExposerTyped = {
     el:HTMLElement
 }
 
+/**Zero width space. Used for text formatting and stuff */
+export var zeroWidth="​"
+

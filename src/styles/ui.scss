@@ -68,6 +68,9 @@
     display: flex;
     flex-direction: column;
     background-color: var(--bg-dark-color);
+    //Text
+    font-family: "IBM Plex Mono";
+    color: var(--text-base-color);
 }
 
 #eventLogList{
@@ -94,9 +97,14 @@
     flex-grow: 10;
 
     //Text
-    font-family: "IBM Plex Mono";
     font-size: 0.85em;
-    color: var(--text-base-color);
+    
+
+    //Force color elements
+    hr{
+        color: var(--text-base-color);
+        border-color: var(--text-base-color);
+    }
 
     // flex-grow: 1;
     >.LogEntry{
@@ -104,7 +112,18 @@
         margin-bottom: 0;
         max-width: 100%;
         >.LogTitle{
-            font-size: 1.1em;
+            font-size: 1em;
+            font-weight: 600;
+            margin-right: 0.5em;
+        }
+        &:not(:last-child){
+            .typed-cursor{
+                display: none;
+            }
+        }
+        .typed-cursor.typed-cursor--blink{
+            animation: typedjsBlink 0.9s infinite;
+            -webkit-animation: typedjsBlink 0.9s infinite;
         }
     }
 }
@@ -117,5 +136,28 @@
     padding: 0.3em 0.5em;
     margin-bottom: 1em;
     margin-left: 0.2em;
+    >ul{
+        padding-left: 0.5em;
+        list-style-type: none;
+        >li{
+            //Text
+            font-size: 0.85em;
+            --option-color:var(--text-base-color);
+            color:var(--option-color);
+            &::marker{
+                display: none;
+            }
+            &::before{
+                content: ">";
+                padding-left: 0.5em;
+                padding-right: 0.1em;
+            }
+            &:hover,&:focus{
+                background-color: var(--option-color);
+                color: var(--bg-dark-color);
+                
+            }
+        }
+    }
 }
 

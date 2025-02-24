@@ -42,11 +42,12 @@ export class Controller{
             root.render(entries);            
         }
         
+        
 
-        // //TODO: Remove temporary fix (Use jotai store)
-        // setTimeout(() => {EventLog.instance.addRaw("Start")
-        //     EventLog.instance.addRaw((<span><b>BOLD</b> & <small>small</small></span>))
-        // },200);
+        // TODO: Remove temporary fix 
+        setTimeout(() => {
+            this.log.addRaw("Initializing^1000.^1000.^1000.","<span style=\"color:dodgerblue;\">System:</span>")
+        },200);
         
         // //Create action menu
         // ActionMenu.create()
