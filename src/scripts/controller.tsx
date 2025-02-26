@@ -6,6 +6,7 @@ import { ActionMenu } from './UI/actionMenu';
 import { RenderWorld } from './UI/woldMap';
 import { BaseScreen } from './UI/UI';
 import { getDefaultStore } from 'jotai';
+import { Story } from './Story/story';
 
 
 /**Core class that manages all the other game elements */
@@ -42,11 +43,11 @@ export class Controller{
             root.render(entries);            
         }
         
-        
+        let story = new Story();
 
         // TODO: Remove temporary fix 
         setTimeout(() => {
-            this.log.addRaw("Initializing^1000.^1000.^1000.","<span style=\"color:dodgerblue;\">System:</span>")
+            story.section();
         },200);
         
         // //Create action menu

@@ -26,46 +26,73 @@
     flex-direction: column;
     justify-content: flex-start;
     flex-grow: 1;
-    gap:1em;
-    padding: 1em;
+    gap:0.6em;
+    padding: 0.6em 0.3em;
     max-width: 30%;
-    background-color: var(--bg-main-color);
+    background-color: var(--bg-dark-color2);
+    width: fit-content;
+    position: relative;
 
     //Border
     border-color: var(--border-main-color);
-    border-width: 2px;
+    border-width: 0.15em;
     border-style: solid;
     border-left: none;
-    min-width: 5em;
     border-top-right-radius: 1em;
     border-bottom-right-radius: 1em;
 
     //Overlap with game screen
     margin-right: -1em;
     z-index: 4;
-    
+    font-size: 1.5em;
 }
 
 //Buttons for the game options
 .optionButton{
     border: none;
     background-color: var(--bg-alt-color);
-    color: var(--UI-text-color);
+
+    //Text
+    font-family: "IBM Plex Mono";
+    color: var(--text-base-color);
+    
+    font-weight: 500;
+    line-height: 1.5em;
+    
+
+    //Shape
+    width: fit-content;
     box-sizing:border-box;
     clip-path: polygon(1.5em 0, calc(100% - 1.5em) 0, 100% 50%, calc(100% - 1.5em) 100%, 1.5em 100%, 0 50%);
+    >span{
+        vertical-align: top;
+    }
+
+    &::before,&::after{
+        font-size: 2em;
+    }
+
+    &::before{
+        content: "<";
+    }
+    &::after{
+        content: ">";
+    }
 }
 
 #optionPath{
+    position: absolute;
+    top:0;
+    right: 0.3em;
+    font-size: 0.6em;
+    font-family: "IBM Plex Mono";
     &:empty{
         display: none;
     }
-    font-size: 0.6em;
-    margin-bottom: -1em;
-    margin-top: -1.5em;
 }
 
 #fullLog{
-    padding-left: 1em;
+    padding-left: 1.6em;
     display: flex;
     flex-direction: column;
     align-content: end;
@@ -88,7 +115,7 @@
 
     //Size
     padding: {
-        left:0.5em;
+        left:1.5em;
         right:0.5em;
         top:1em;
         bottom: 1em;
@@ -129,10 +156,9 @@
 
 #eventOptions{
     border-color: var(--border-main-color);
-    border-width: 2px;
+    border-width: 0.15em;
     border-style: solid;
     min-height: fit-content;
-    
     
     padding: 0.3em 0.5em;
     margin-bottom: 1em;

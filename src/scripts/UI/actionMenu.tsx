@@ -71,7 +71,7 @@ function AllActionButtons({atom}:{atom:PrimitiveAtom<PrimitiveAtom<string>[]>}){
 function ActionButton({atom}:{atom:PrimitiveAtom<string>}){
     let [actionUse] = useAtom(atom);
     console.log(`Rerendering Button: ${actionUse}`)
-    return <input type="button" className="optionButton" value={actionUse as string}/>
+    return <button className="optionButton" ><span>{actionUse as string}</span></button>
 }
 
 
