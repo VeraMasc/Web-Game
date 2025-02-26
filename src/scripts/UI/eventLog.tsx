@@ -4,6 +4,7 @@ import { selectAtom, splitAtom } from 'jotai/utils';
 import { atom, useAtom, PrimitiveAtom, useSetAtom, useAtomValue, createStore, Provider, getDefaultStore, Atom } from 'jotai';
 import { CatchError, escapeLogStrings, ExposedTyped } from './UIutils';
 import { ReactTyped, Typed } from "react-typed";
+import { RenderEventOptions } from "./eventOptions";
 
 const defaultStore = getDefaultStore()
 
@@ -19,6 +20,8 @@ export class EventLog extends React.Component {
 
     /**List of all the entries*/
     entries:PrimitiveAtom<LogEntry[]> = atom([]);
+
+    reverseEntries:Atom<LogEntry[]> = atom((get)=>get(this.entries).reverse())
 
     /**Split atom version of {@link entries} */
     private splitEntries = splitAtom(this.entries);
@@ -76,12 +79,7 @@ export class EventLog extends React.Component {
     toHtml= ()=> <CatchError>
             <div id="fullLog">
                 <div id="eventLogList"><RenderLogsList list={this.splitEntries}/></div>
-                <div id="eventOptions">
-                    <ul>
-                        <li tabIndex={0}>Test option 1</li>
-                        <li tabIndex={0}>Test option 2</li>
-                    </ul>
-                </div>
+                <RenderEventOptions/>
             </div>
         </CatchError>            
 
@@ -90,7 +88,8 @@ export class EventLog extends React.Component {
 /**Renders a list of logs from an atom list of atoms */
 function RenderLogsList({list}:{list:Atom<Atom<LogEntry>[]>}){
     let value = useAtomValue(list);
-    return value.map(v =>  <LogMemoComponent logAtom={v} key={v.toString()} />);
+    //The extra div is necessary for styling reasons. The scrollbar dies otherwise
+    return <div>{value.map(v =>  <LogMemoComponent logAtom={v} key={v.toString()} />)}</div>;
 }
 
 /**Entry of the log*/
@@ -113,7 +112,7 @@ export class LogEntry {
 
 /**Renders a LogEntry from a memoized atom */
 var LogMemoComponent= memo(function({logAtom}:{logAtom:Atom<LogEntry>}){
-    let [value] = useAtom(logAtom); // console.log(value);
+    let [value] = useAtom(logAtom);  console.log(value);
     return <LogComponent log={value}/>
 })
 

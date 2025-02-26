@@ -8,6 +8,7 @@ export function BaseScreen(){
     //TODO: Improve screen components
     let menu = new ActionMenu();
     let log = new EventLog();
+    //<menu.toHTML/>
     return [<div id="sideMenu">
         <menu.toHTML/>
     </div>,

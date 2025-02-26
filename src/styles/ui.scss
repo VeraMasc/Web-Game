@@ -10,6 +10,8 @@
     max-height: 100%;
     justify-content: stretch;
     // align-items: stretch;
+
+    font-size: 1.5em;
     
 }
 
@@ -42,7 +44,6 @@
     margin-right: -1em;
     z-index: 4;
     
-    
 }
 
 //Buttons for the game options
@@ -67,31 +68,30 @@
     padding-left: 1em;
     display: flex;
     flex-direction: column;
+    align-content: end;
     background-color: var(--bg-dark-color);
     //Text
     font-family: "IBM Plex Mono";
     color: var(--text-base-color);
+    flex-grow: 10;
+    
 }
 
 #eventLogList{
     //Display
     display: flex;
-    flex-direction: column;
-    justify-content: end;
+    flex-direction: column-reverse;
     flex-wrap: nowrap;
     overflow-y: scroll;
     word-wrap: break-word;
     white-space: pre-wrap;
 
-    // background-color: var(--bg-main-color);
-    
-
     //Size
     padding: {
         left:0.5em;
         right:0.5em;
-        top:0.5em;
-        bottom: 0.5em;
+        top:1em;
+        bottom: 1em;
     };
     min-width: 20em;
     flex-grow: 10;
@@ -106,8 +106,7 @@
         border-color: var(--text-base-color);
     }
 
-    // flex-grow: 1;
-    >.LogEntry{
+    .LogEntry{
         margin-top:0.8em;
         margin-bottom: 0;
         max-width: 100%;
@@ -132,32 +131,56 @@
     border-color: var(--border-main-color);
     border-width: 2px;
     border-style: solid;
-    min-height: 1em;
+    min-height: fit-content;
+    
+    
     padding: 0.3em 0.5em;
     margin-bottom: 1em;
     margin-left: 0.2em;
     >ul{
         padding-left: 0.5em;
         list-style-type: none;
-        >li{
-            //Text
-            font-size: 0.85em;
-            --option-color:var(--text-base-color);
-            color:var(--option-color);
-            &::marker{
-                display: none;
-            }
-            &::before{
-                content: ">";
-                padding-left: 0.5em;
-                padding-right: 0.1em;
-            }
-            &:hover,&:focus{
-                background-color: var(--option-color);
-                color: var(--bg-dark-color);
-                
-            }
-        }
     }
 }
 
+//Log choices
+.optionChoice{
+    position: relative;
+    //Text
+    font-size: 0.85em;
+    --option-color:var(--text-base-color);
+    color:var(--option-color);
+    //Border
+    border: solid 0.1em transparent;
+    padding-left: 1em;
+
+    &::before{
+        content: ">";
+        position: absolute;
+        left: 0.1em;
+    }
+
+    //State changes
+    &:hover,&:focus{
+        background-color: var(--option-color);
+        color: var(--bg-dark-color);    
+    }
+    &:active{
+        background-color:transparent;
+        color:var(--option-color);
+        border-color: var(--option-color);
+    }
+}
+
+.blockedChoice{
+    text-decoration: line-through;
+    --option-color:var(--text-locked-color);
+    &::before{
+        content: "🞩";
+        // padding-right: 0.1ex;
+        position: absolute;
+        left: 0em;
+        top: -0.04em;
+        
+    }
+}
