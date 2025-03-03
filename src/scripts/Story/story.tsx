@@ -1,5 +1,6 @@
 import { Controller } from '../controller';
 import { StoryArray, PassageElement, CustomPassage } from './storyElement';
+import { LogEntry } from '../UI/eventLog';
 
 /**It handles all the story progression and logic */
 export class Story{
@@ -9,72 +10,43 @@ export class Story{
     };
     private static _instance:Story=null;
 
-    /**Current Position inside the current story array*/
-    index:number=-1;
 
-    /**Current story array*/
-    branch:StoryArray;
 
-    /**Stored return of the current section function*/
-    stack:StoryArray[];
-
-    /**Last call to print */
-    lastPrint:Promise<void>;
-
-    //TODO: Remove
-    section:()=>Promise<void>= async ()=>{
-        Controller.instance.log.clear();
-        await this.print("Initializing^1000.^1000.^1000.","<span style=\"color:dodgerblue;\">System:</span>")
-        await this.print("System compromised!^1000 Initiating damage recovery","<span style=\"color:dodgerblue;\">System:</span>")
-    }
 
     constructor(){
         //Don't create controller if it already exists
         return window['story']=(Story._instance ??=this); 
     }
 
-    /**Retrieves the next passage in the section */
-    nextPassage():PassageElement{
-        while((this.index += 1) < this.branch.length){
-            //Check if its a passage element
-            let passage = this.branch[this.index];
-            if(typeof passage === "string" || passage instanceof CustomPassage)
-                return passage;
+    
 
-            //If not a passage, Try next element
-        }
-        console.warn("End of section reached")
-        return null; //TODO: Exit passage nesting
-    }
-
-    /**Displays the next passage */
-    printNext(){
-
-        //TODO: implement as iterator
-        let passage = this.nextPassage();
-        if(passage == null)
-            return;
-        this.print(passage as string)
-        .then(()=>this.printNext())
-    }
+    
 
     /**Executes the story as an iterator*/
     *play(section:StoryArray){
-        //TODO: Iterator returns current story state
-        this.index =-1; //Reset index
-        let state = new StoryState();
+        
+        let state = new StoryState(section);
         do{
-            var passage = this.nextPassage();
+            var passage = state.nextPassage();
             if(passage == null)
                 break;
-            this.print(passage as string)
+
+            if(typeof passage === "string"){
+                let parsed = LogEntry.parse(passage);
+                console.log(parsed)
+                Story.print(parsed.content, parsed.title)
+            }else{
+                //TODO: Implement print non strings
+                console.error("Pinting non string StoryElements not implemented")
+            }
+            
             yield state;
-        }while(passage )
+        }while(passage)
         
     }
 
     /**Prints a portion of dialogue and awaits keypress from user */
-    async print(text:string, title:string=null){
+    static async print(text:string, title:string=null){
         //TODO: make more flexible
         Controller.instance.log.addRaw(text,title)
 
@@ -83,6 +55,12 @@ export class Story{
             window.addEventListener('keypress', resolve, {once:true});
         });
     }
+
+    
+    /**Easy way to test the parsing
+     * @deprecated
+    */
+    static parseTest = (str:string)=>LogEntry.parse(str)
 }
 
 /**Keeps track of the story state within the play iterator */
@@ -130,6 +108,17 @@ export class StoryState{
         }
         console.warn("End of section reached")
         return null; //TODO: Exit passage nesting
+    }
+
+    /**Displays the next passage */
+    printNext(){
+
+        //TODO: implement as iterator
+        let passage = this.nextPassage();
+        if(passage == null)
+            return;
+        Story.print(passage as string)
+        .then(()=>this.printNext())
     }
 }
 

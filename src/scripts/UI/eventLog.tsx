@@ -105,7 +105,34 @@ export class LogEntry {
 
     toString():string {
         let isString=typeof this.content === "string";
-        return `${this.title}: ${isString? this.content : renderToString(this.content)}`;
+        return `${isString? this.content : renderToString(this.content)}`;
+    }
+
+    /**Parses a passage into a log entry */
+    static fromPassage(str:string){
+        let {content,title} = LogEntry.parse(str);
+        return new LogEntry(content, title);
+    }
+    
+    /**Pattern to extract the title from story passages */
+    static readonly titleRegEx = /^<((?:(?:<[^<>]+>)|[^<>]+)+)>/
+
+    /**Parses a passage and returns its string contents */
+    static parse(str:string){
+        let content = str;
+        let title:string=null;
+
+        if(!str.startsWith("\\")){
+            //Try to extract title
+            let match = content.match(LogEntry.titleRegEx);
+            if(match){
+                title = match[1]
+                content = content.slice(match[0]?.length ?? 0)
+            }
+        } else {
+            content = content.slice(1) //Remove escape character
+        }
+        return {content,title};
     }
 
 }
