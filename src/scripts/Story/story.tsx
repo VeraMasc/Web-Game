@@ -1,6 +1,7 @@
 import { Controller } from '../controller';
 import { StoryArray, PassageElement, CustomPassage } from './storyElement';
 import { LogEntry } from '../UI/eventLog';
+import {renderToString} from "react-dom/server"
 
 /**It handles all the story progression and logic */
 export class Story{
@@ -31,13 +32,12 @@ export class Story{
             if(passage == null)
                 break;
 
-            if(typeof passage === "string"){
-                let parsed = LogEntry.parse(passage);
-                console.log(parsed)
-                Story.print(parsed.content, parsed.title)
-            }else{
-                //TODO: Implement print non strings
-                console.error("Pinting non string StoryElements not implemented")
+            if(typeof passage === "string" || passage instanceof CustomPassage){
+                let entry = LogEntry.fromPassage(passage);
+                Story.print(entry)
+            
+            }else {
+                console.error(`Can't print invalid passage of type ${(passage as Object)?.constructor?.name}`)
             }
             
             yield state;
@@ -46,9 +46,8 @@ export class Story{
     }
 
     /**Prints a portion of dialogue and awaits keypress from user */
-    static async print(text:string, title:string=null){
-        //TODO: make more flexible
-        Controller.instance.log.addRaw(text,title)
+    static async print(entry:LogEntry){
+        Controller.instance.log.add(entry)
 
         //TODO: improve keypress detection and add mouse
         return new Promise(resolve => {
@@ -110,16 +109,6 @@ export class StoryState{
         return null; //TODO: Exit passage nesting
     }
 
-    /**Displays the next passage */
-    printNext(){
-
-        //TODO: implement as iterator
-        let passage = this.nextPassage();
-        if(passage == null)
-            return;
-        Story.print(passage as string)
-        .then(()=>this.printNext())
-    }
 }
 
 /**References a specific point in a story branch */

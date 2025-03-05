@@ -2,9 +2,10 @@ import React, {useState,JSX, Children, memo} from "react"
 import { renderToString } from 'react-dom/server';
 import { selectAtom, splitAtom } from 'jotai/utils';
 import { atom, useAtom, PrimitiveAtom, useSetAtom, useAtomValue, createStore, Provider, getDefaultStore, Atom } from 'jotai';
-import { CatchError, escapeLogStrings, ExposedTyped } from './UIutils';
+import { CatchError, convertCssToObject, escapeLogStrings, ExposedTyped } from './UIutils';
 import { ReactTyped, Typed } from "react-typed";
 import { RenderEventOptions } from "./eventOptions";
+import { PassageElement, CustomPassage } from '../Story/storyElement';
 
 const defaultStore = getDefaultStore()
 
@@ -92,14 +93,17 @@ function RenderLogsList({list}:{list:Atom<Atom<LogEntry>[]>}){
     return <div>{value.map(v =>  <LogMemoComponent logAtom={v} key={v.toString()} />)}</div>;
 }
 
+
+//TODO: Put Log Entry in its own file
 /**Entry of the log*/
 export class LogEntry {
     
     /**
      * @param content Text of the entry
      * @param title Title of the entry (describes the type of entry)
+     * @param titleStyle Css style to insert onto the title
      */
-    constructor(public content:string, public title:string=""){
+    constructor(public content:string, public title:string="", public titleStyle:string=""){
         
     }
 
@@ -108,31 +112,49 @@ export class LogEntry {
         return `${isString? this.content : renderToString(this.content)}`;
     }
 
-    /**Parses a passage into a log entry */
-    static fromPassage(str:string){
-        let {content,title} = LogEntry.parse(str);
-        return new LogEntry(content, title);
+    /**Parses/converts a passage into a log entry */
+    static fromPassage(passage:string|CustomPassage){
+        if(passage instanceof CustomPassage){
+
+        }else{ //String passage
+            let {content,title,titleStyle} = LogEntry.parse(passage);
+            return new LogEntry(content, title,titleStyle);    
+        }
     }
     
-    /**Pattern to extract the title from story passages */
-    static readonly titleRegEx = /^<((?:(?:<[^<>]+>)|[^<>]+)+)>/
+    /**Pattern to extract the title from story passages 
+     * @description the pattern is "[Title]Text" use "[]" to skip the title and "\]" within the title to escape the end title character.
+    */
+    static readonly titleRegEx = /^\[((?:[^\\\]]|(?:\\[\\\]]?))*?)\]/
+
+    /**Pattern to extract the style after the title */
+    static readonly styleRegEx = /^\{([^\}]+)}/
+
+    /**Finds all the escaped end title "]" and "\" characters within a title (once the title has been extracted) */
+    static readonly escapeTitleRegEx = /\\([\\\]])/g
 
     /**Parses a passage and returns its string contents */
     static parse(str:string){
         let content = str;
         let title:string=null;
+        let titleStyle:string=null;
 
-        if(!str.startsWith("\\")){
-            //Try to extract title
-            let match = content.match(LogEntry.titleRegEx);
-            if(match){
-                title = match[1]
-                content = content.slice(match[0]?.length ?? 0)
+        
+        //Try to extract title
+        let match = content.match(LogEntry.titleRegEx);
+        if(match){
+            title = match[1].replaceAll(LogEntry.escapeTitleRegEx,"$1")
+            content = content.slice(match[0]?.length ?? 0)
+
+            //Try to get the title style
+            let style = match[1] && content.match(LogEntry.styleRegEx)
+            if(style){
+                titleStyle = style[1];
+                content = content.slice(style[0]?.length ?? 0)
             }
-        } else {
-            content = content.slice(1) //Remove escape character
         }
-        return {content,title};
+        
+        return {content,title,titleStyle};
     }
 
 }
@@ -145,11 +167,25 @@ var LogMemoComponent= memo(function({logAtom}:{logAtom:Atom<LogEntry>}){
 
 /**Renders a LogEntry in react */
 function LogComponent({log}:{log:LogEntry}){
-    let hasTitle = log.title?.length>0;
-        
+    if(log==null)
+        return;
+    
+    let titleEl = null;
+    if(log.title?.length>0) {//Has title
+        let style = {}
+        try{
+            style=convertCssToObject(log.titleStyle??"")
+        }catch(err){
+            console.error(`Failed to parse LogEntry style: "${log.titleStyle}"`)
+        }
+
+        titleEl= <span className="LogTitle" style={style}  dangerouslySetInnerHTML={{__html:log.title}}></span>;
+    }
+        //TODO: Add a way to disable react typed for some elements
+        //TODO: Add option to acutocontinue after a message is finished
     return <CatchError>
         <p className="LogEntry" >
-            {hasTitle? <span className="LogTitle"  dangerouslySetInnerHTML={{__html:log.title}}></span> :null}
+            {titleEl}
             <ReactTyped strings={[log.content]} cursorChar="▌" typeSpeed={20} onBegin={onLogTypingBegin} ></ReactTyped>
         </p>
     </CatchError>  

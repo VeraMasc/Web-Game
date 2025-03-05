@@ -1,3 +1,5 @@
+import React from "react"
+
 /** Defines and describes all the possible elements in a story function
  * @module
  */
@@ -42,7 +44,22 @@ export class Tag{
 }
 
 /**Parent class of all non string {@link PassageElement}*/
-export abstract class CustomPassage{
+export abstract class CustomPassage extends React.Component{
 
+    /**Do not override unless necessary, override {@link renderPassage} instead */
+    render() {
+        React.useEffect(this.onRender.bind(this),[]);
+        return this.renderPassage()
+    }
+
+    /**Renders the on screen text part of the passage. Override this instead of render*/
+    renderPassage() {
+        return <span>Default CustomPassage render</span>
+    }
+
+    /**What else to do when the element is rendered */
+    onRender(){
+        console.log("CustomPassage OnRender")
+    }
 }
 

@@ -1,0 +1,15 @@
+
+table.retroTable{
+    
+    tr:not(:last-of-type)>:is(th,td){
+        border-bottom: 0.1em solid;
+    }
+    th,td{
+        &:not(:last-of-type){
+            border-right: 0.1em solid;
+        }
+    }
+    th{
+        border-width: 0.15em !important;
+    }
+}

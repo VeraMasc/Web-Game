@@ -7,7 +7,7 @@ import { RenderWorld } from './UI/woldMap';
 import { BaseScreen } from './UI/UI';
 import { getDefaultStore } from 'jotai';
 import { Story } from './Story/story';
-import { testSegment } from './Story/Text/testText';
+import { testStory } from './Story/Text/testText';
 
 
 /**Core class that manages all the other game elements */
@@ -49,7 +49,7 @@ export class Controller{
         // TODO: Remove temporary fix 
         setTimeout(() => {
             //story.section();
-            window['play'] = story.play(testSegment())
+            window['play'] = story.play(testStory())
         },200);
         
         // //Create action menu

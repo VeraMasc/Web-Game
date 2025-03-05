@@ -56,3 +56,10 @@ type ExposerTyped = {
 /**Zero width space. Used for text formatting and stuff */
 export var zeroWidth="​"
 
+/**React demands an object for styles but offers no way to parse them, so here we are */
+export function convertCssToObject(value:string){
+  // Without the look behind
+  const regex = /([\w-.]+)\s*:([^;]+);?/g, o = {}; // Heck I think this should also work for Chrome as well
+  value.replace(regex, (m,p,v) => o[p] = v);
+  return o as React.CSSProperties;
+}
