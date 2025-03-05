@@ -1,6 +1,6 @@
 import { Controller } from '../controller';
 import { StoryArray, PassageElement, CustomPassage } from './storyElement';
-import { LogEntry } from '../UI/eventLog';
+import { LogEntry } from '../UI/LogEntry';
 import {renderToString} from "react-dom/server"
 
 /**It handles all the story progression and logic */

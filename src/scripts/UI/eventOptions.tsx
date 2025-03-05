@@ -34,7 +34,6 @@ function RenderOptionChoice({text, isBlocked, ...props}:OptionChoiceProps){
 
 /**Handles the user clicking an Event Option */
 function onClickOption(ev: React.MouseEvent<HTMLElement>){
-    console.log(ev)
     EventLog.instance.addRaw("Option pressed!")
     
 }

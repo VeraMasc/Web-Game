@@ -9,9 +9,10 @@ export var testStory = ()=>[
     "This is a test story",
     "[Blue:]{color:dodgerblue;} Title test", //Title test
     `[] Skip title test`,
-    `[\\]This is title[] Text starts here`, //Escape title test
+    `[\\]Escaped title chars[] Text starts here`, //Escape title test
+    `[Rare char test]{color:goldenrod;} ö à ñ`,
     `[Html test:] ${renderToString(<><i>italic</i> <hr/> hr <b>bold</b> <br/> newline <small>small</small></>)}`,
-    `[<span style=\"color:dodgerblue;\">Table test:</span>]${renderToString(<div>
+    `[Table test:]{color:dodgerblue;}${renderToString(<div>
     <table className='retroTable'>
         <tr>
             <th>Company</th>

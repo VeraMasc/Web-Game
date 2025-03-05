@@ -2,7 +2,6 @@ import { createRoot } from 'react-dom/client';
 import { EventLog } from './UI/eventLog';
 import React from 'react';
 import { World } from './World/world';
-import { ActionMenu } from './UI/actionMenu';
 import { RenderWorld } from './UI/woldMap';
 import { BaseScreen } from './UI/UI';
 import { getDefaultStore } from 'jotai';
@@ -25,7 +24,6 @@ export class Controller{
     /**Retrieves the default jotai store. Use only for debugging */
     get defaultStore(){return getDefaultStore()}
 
-    menu:ActionMenu;
 
     constructor(){
         //Don't create controller if it already exists

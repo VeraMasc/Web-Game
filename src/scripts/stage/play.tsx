@@ -1,9 +1,9 @@
 import { Stage, game, ColorLayer, BitmapText  } from "melonjs";
-import { EventLog, LogEntry } from "../UI/eventLog";
+import { EventLog } from "../UI/eventLog";
 import {createRoot} from "react-dom/client"
 import { Controller } from "../controller";
 import React from "react";
-
+import { LogEntry } from "../UI/LogEntry";
 
 class PlayScreen extends Stage {
     /**
