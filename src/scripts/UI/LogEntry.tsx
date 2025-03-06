@@ -2,10 +2,11 @@
 import React, {useState,JSX, Children, memo} from "react"
 import { renderToString } from 'react-dom/server';
 import { atom, useAtom, PrimitiveAtom, useSetAtom, useAtomValue, createStore, Provider, getDefaultStore, Atom } from 'jotai';
-import { CatchError, convertCssToObject, escapeLogStrings, ExposedTyped } from './UIutils';
+import { CatchError, convertCssToObject, escapeLogStrings, ExposedTyped, InstantTyped } from './UIutils';
 import { ReactTyped, Typed } from "react-typed";
 
-import { PassageElement, CustomPassage } from '../Story/storyElement';
+import { PassageElement, CustomPassage, RenderCustomPassage } from '../Story/storyElement';
+import { StoryState } from '../Story/storyState';
 
 /**Entry of the log*/
 export class LogEntry {
@@ -15,7 +16,7 @@ export class LogEntry {
      * @param title Title of the entry (describes the type of entry)
      * @param titleStyle Css style to insert onto the title
      */
-    constructor(public content:string, public title:string="", public titleStyle:string=""){
+    constructor(public content:string|JSX.Element, public title:string="", public titleStyle:string=""){
         
     }
 
@@ -25,9 +26,9 @@ export class LogEntry {
     }
 
     /**Parses/converts a passage into a log entry */
-    static fromPassage(passage:string|CustomPassage){
+    static fromPassage(passage:string|CustomPassage, state:StoryState){
         if(passage instanceof CustomPassage){
-
+            return new LogEntry(<RenderCustomPassage passage={passage} state={state}/>)
         }else{ //String passage
             let {content,title,titleStyle} = LogEntry.parse(passage);
             return new LogEntry(content, title,titleStyle);    
@@ -93,13 +94,21 @@ function LogComponent({log}:{log:LogEntry}){
 
         titleEl= <span className="LogTitle" style={style}  dangerouslySetInnerHTML={{__html:log.title}}></span>;
     }
-        //TODO: Add a way to disable react typed for some elements
-        //TODO: Add option to acutocontinue after a message is finished
+
+    //TODO: Add option to acutocontinue after a message is finished
+    //Passage content
+    let contentEl:JSX.Element;
+    if(typeof log.content === "string"){ //Typed string
+        contentEl = <ReactTyped strings={[log.content]} cursorChar="▌" typeSpeed={20} onBegin={onLogTypingBegin} ></ReactTyped>
+    } else{ //Instantly render passage
+        contentEl = <InstantTyped children={log.content}  cursorChar="▌" onBegin={onLogTypingBegin} ></InstantTyped>
+    }
+                
     return <CatchError>
-        <p className="LogEntry" >
+        <div className="LogEntry" >
             {titleEl}
-            <ReactTyped strings={[log.content]} cursorChar="▌" typeSpeed={20} onBegin={onLogTypingBegin} ></ReactTyped>
-        </p>
+            <CatchError>{contentEl}</CatchError>
+        </div>
     </CatchError>  
 }
 

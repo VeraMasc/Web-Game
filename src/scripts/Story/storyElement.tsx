@@ -1,4 +1,6 @@
 import React from "react"
+import { StoryState } from './storyState';
+import {ReactTyped} from 'react-typed'
 
 /** Defines and describes all the possible elements in a story function
  * @module
@@ -44,16 +46,20 @@ export class Tag{
 }
 
 /**Parent class of all non string {@link PassageElement}*/
-export abstract class CustomPassage extends React.Component{
+export abstract class CustomPassage{
 
-    /**Do not override unless necessary, override {@link renderPassage} instead */
-    render() {
+    /**Renders the passage inside a log entry.
+     * Do not override unless necessary, override {@link renderPassage} instead 
+     * @param state Current state of the story, necessary for complex behaviors
+     * @param ref Ref needed by {@link ReactTyped}
+     */
+    renderEntry(state:StoryState, ref?:React.RefObject<any>) {
         React.useEffect(this.onRender.bind(this),[]);
-        return this.renderPassage()
+        return <span ref={ref}>{this.renderPassage(state)}</span>
     }
 
     /**Renders the on screen text part of the passage. Override this instead of render*/
-    renderPassage() {
+    protected renderPassage(state:StoryState) {
         return <span>Default CustomPassage render</span>
     }
 
@@ -61,5 +67,20 @@ export abstract class CustomPassage extends React.Component{
     onRender(){
         console.log("CustomPassage OnRender")
     }
+}
+
+/**Props used to render custom passages */
+export type CustomPassageProps={
+    /**Current story state */
+    state:StoryState, 
+    /**Passage to render */
+    passage:CustomPassage,
+    /**Reference to the HTMLElement */
+    ref?:React.RefObject<any>,
+}   
+
+export function RenderCustomPassage({state, passage,ref,...props}:CustomPassageProps){
+    console.log(ref)
+    return passage.renderEntry(state,ref)
 }
 

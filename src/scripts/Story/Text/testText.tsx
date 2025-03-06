@@ -1,6 +1,6 @@
 import { renderToString } from 'react-dom/server';
 import { StoryArray, TaggedArray, Tag } from '../storyElement';
-import { Choice } from '../storyEvent';
+import { Choice } from '../storyEvents';
 
 
 
@@ -8,7 +8,7 @@ import { Choice } from '../storyEvent';
 export var testStory = ()=>[
     "This is a test story",
     "[Blue:]{color:dodgerblue;} Title test", //Title test
-    `[] Skip title test`,
+    `[]Skip title test`,
     `[\\]Escaped title chars[] Text starts here`, //Escape title test
     `[Rare char test]{color:goldenrod;} ö à ñ`,
     `[Html test:] ${renderToString(<><i>italic</i> <hr/> hr <b>bold</b> <br/> newline <small>small</small></>)}`,
@@ -32,7 +32,8 @@ export var testStory = ()=>[
     </table> 
     </div>)}`,
     "[Choice tests:] Starting",
-    new Choice("Option 1", "Option 2")
+    new Choice("Option 1", "Option 2"),
+    "You should not be able to read this"
 ] as StoryArray
 
 

@@ -48,6 +48,7 @@ export class Controller{
         setTimeout(() => {
             //story.section();
             window['play'] = story.play(testStory())
+            EventLog.instance.playing = window['play'];
         },200);
         
         // //Create action menu

@@ -4,6 +4,8 @@ import { EventLog } from './eventLog';
 
 /**React component to render the player choices */
 export function RenderEventOptions(){
+    //TODO: Add way to move optionselection
+    //TODO: Add actual option rendering
     useEffect(()=>console.warn("Options"),[]);
     return <CatchError>
                 <div id="eventOptions">

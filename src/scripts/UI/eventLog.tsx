@@ -7,6 +7,7 @@ import { ReactTyped, Typed } from "react-typed";
 import { RenderEventOptions } from "./eventOptions";
 import { PassageElement, CustomPassage } from '../Story/storyElement';
 import { LogEntry,LogMemoComponent } from "./LogEntry";
+import { StoryState } from "../Story/storyState";
 
 const defaultStore = getDefaultStore()
 
@@ -28,6 +29,9 @@ export class EventLog extends React.Component {
     /**Split atom version of {@link entries} */
     private splitEntries = splitAtom(this.entries);
 
+    /**Story iterator for the story currently playing */
+    playing:Generator<StoryState, void, unknown>=null;
+
     
     constructor(props={}){
         super(props)
@@ -45,6 +49,12 @@ export class EventLog extends React.Component {
     addRaw(text:string, title?:string){
         this.add(new LogEntry(text, title))
     }
+
+    /**Adds the next passage in the current story ({@link playing}) */
+    addNext(){
+        this.playing.next();
+    }
+
     /**Sets all logs form a list*/
     set(list:LogEntry[]){
         //TODO: Fix rendering (typing) bugs when setting existing entries
@@ -75,15 +85,21 @@ export class EventLog extends React.Component {
         return this.toHtml();
     }
 
-    //TODO: Add way to move optionselection
-    //TODO: Add actual option rendering
+    
+    
     toHtml= ()=> <CatchError>
-            <div id="fullLog">
+            <div id="fullLog" tabIndex={0} onKeyDown={this.nextPassageEvent.bind(this)}>
                 <div id="eventLogList"><RenderLogsList list={this.splitEntries}/></div>
                 <RenderEventOptions/>
             </div>
         </CatchError>            
 
+    nextPassageEvent(ev:KeyboardEvent){
+        if ([" ", "Enter"].includes(ev.key)){
+            this.addNext()
+        }
+
+    }
 }
 
 /**Renders a list of logs from an atom list of atoms */

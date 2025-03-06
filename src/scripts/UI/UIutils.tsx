@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ReactTyped, Typed } from 'react-typed';
+import { ReactTyped, Typed, ReactTypedProps } from 'react-typed';
 import { EventLog } from './eventLog';
 
 /**Catches react errors */
@@ -21,7 +21,7 @@ export class CatchError extends React.Component {
     render() {
       if (this.state.hasError) {
         // You can render any custom fallback UI
-        return this.props.fallback ?? <p><b>Error with no fallback!</b></p>;
+        return this.props.fallback ?? <span><b>Error with no fallback!</b></span>;
       }
   
       return this.props.children;
@@ -58,8 +58,22 @@ export var zeroWidth="​"
 
 /**React demands an object for styles but offers no way to parse them, so here we are */
 export function convertCssToObject(value:string){
-  // Without the look behind
-  const regex = /([\w-.]+)\s*:([^;]+);?/g, o = {}; // Heck I think this should also work for Chrome as well
-  value.replace(regex, (m,p,v) => o[p] = v);
-  return o as React.CSSProperties;
+    // Without the look behind
+    const regex = /([\w-.]+)\s*:([^;]+);?/g, o = {}; // Heck I think this should also work for Chrome as well
+    value.replace(regex, (m,p,v) => o[p] = v);
+    return o as React.CSSProperties;
 }
+
+/**Modified version of {@link ReactTyped}
+*/
+export function InstantTyped({children,...props}:ReactTypedProps){
+    let parseRef=(ref)=>{
+        console.log(ref);
+        debugger;
+        return ref.current;
+    };
+    const typed = React.useRef(null)
+    return <ReactTyped  children={children}  strings={[""]} attr={"_"} {...props}></ReactTyped>
+}
+
+
