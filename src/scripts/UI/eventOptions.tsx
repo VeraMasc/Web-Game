@@ -1,41 +1,36 @@
 import { useEffect } from "react";
 import { CatchError } from "./UIutils";
 import { EventLog } from './eventLog';
+import { CustomPassage } from "../Story/storyElements";
+import { StoryState } from '../Story/storyState';
+import { EventPassage } from '../Story/storyEvents';
+import React from "react";
+import { atom, PrimitiveAtom, useAtomValue } from "jotai";
+
+/**Controls the data ivolved in the events that the player interacts with */
+export class EventDialogue {
+    //TODO: Better event type
+    value= atom(null as EventPassage)
+    storyState?:StoryState;
+
+    renderEvent(){
+        let event = useAtomValue(this.value)
+        console.warn("Rendering dialogue")
+        return event?.renderDialogue(this.storyState)
+    }
+}
+
 
 /**React component to render the player choices */
-export function RenderEventOptions(){
+export function RenderEventDialogue({event}:{event:EventDialogue}){
     //TODO: Add way to move optionselection
     //TODO: Add actual option rendering
     useEffect(()=>console.warn("Options"),[]);
-    return <CatchError>
-                <div id="eventOptions">
-                    <ul>
-                        <RenderOptionChoice text="Test option 1"/>
-                        <RenderOptionChoice text="Test option 2" isBlocked/>
-                        <RenderOptionChoice text="Loooooooooooooooooong Test option 3"/>
-                    </ul>
-                </div>
-            </CatchError>
+    return <div id="eventDialogue">
+                <CatchError>
+                    {event.renderEvent()}
+                </CatchError>    
+            </div>
+            
 }
 
-/**Props accepted by the option choice component {@link RenderOptionChoice} */
-type OptionChoiceProps = {
-    /**Text of the option */
-    text?:string
-    /**Indicates the option appears but can't be chosen */
-    isBlocked?:boolean
-} 
-
-/**React component to render the each choice */
-function RenderOptionChoice({text, isBlocked, ...props}:OptionChoiceProps){
-    let cls = "optionChoice";
-    if(isBlocked)
-        cls += " blockedChoice"
-    return <li className={cls} tabIndex={0} onClick={isBlocked?null:onClickOption}>{text}</li>
-}
-
-/**Handles the user clicking an Event Option */
-function onClickOption(ev: React.MouseEvent<HTMLElement>){
-    EventLog.instance.addRaw("Option pressed!")
-    
-}

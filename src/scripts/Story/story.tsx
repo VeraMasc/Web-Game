@@ -1,5 +1,5 @@
 import { Controller } from '../controller';
-import { StoryArray, PassageElement, CustomPassage } from './storyElement';
+import { StoryArray, PassageElement, CustomPassage } from './storyElements';
 import { LogEntry } from '../UI/LogEntry';
 import {renderToString} from "react-dom/server"
 import { StoryState } from './storyState';
@@ -12,15 +12,10 @@ export class Story{
     };
     private static _instance:Story=null;
 
-
-
-
     constructor(){
         //Don't create controller if it already exists
         return window['story']=(Story._instance ??=this); 
     }
-
-    
 
     /**Executes the story as an iterator*/
     *play(section:StoryArray){

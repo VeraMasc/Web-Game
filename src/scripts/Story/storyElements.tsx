@@ -65,7 +65,7 @@ export abstract class CustomPassage{
 
     /**What else to do when the element is rendered */
     onRender(){
-        console.log("CustomPassage OnRender")
+    
     }
 }
 

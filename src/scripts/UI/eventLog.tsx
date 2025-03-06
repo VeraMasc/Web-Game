@@ -4,8 +4,8 @@ import { selectAtom, splitAtom } from 'jotai/utils';
 import { atom, useAtom, PrimitiveAtom, useSetAtom, useAtomValue, createStore, Provider, getDefaultStore, Atom } from 'jotai';
 import { CatchError, convertCssToObject, escapeLogStrings, ExposedTyped } from './UIutils';
 import { ReactTyped, Typed } from "react-typed";
-import { RenderEventOptions } from "./eventOptions";
-import { PassageElement, CustomPassage } from '../Story/storyElement';
+import { RenderEventDialogue,EventDialogue } from "./eventOptions";
+import { PassageElement, CustomPassage } from '../Story/storyElements';
 import { LogEntry,LogMemoComponent } from "./LogEntry";
 import { StoryState } from "../Story/storyState";
 
@@ -31,6 +31,8 @@ export class EventLog extends React.Component {
 
     /**Story iterator for the story currently playing */
     playing:Generator<StoryState, void, unknown>=null;
+
+    activeEvent:EventDialogue= new EventDialogue();
 
     
     constructor(props={}){
@@ -90,7 +92,7 @@ export class EventLog extends React.Component {
     toHtml= ()=> <CatchError>
             <div id="fullLog" tabIndex={0} onKeyDown={this.nextPassageEvent.bind(this)}>
                 <div id="eventLogList"><RenderLogsList list={this.splitEntries}/></div>
-                <RenderEventOptions/>
+                <RenderEventDialogue event={this.activeEvent}/>
             </div>
         </CatchError>            
 

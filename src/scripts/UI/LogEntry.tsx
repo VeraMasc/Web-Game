@@ -5,7 +5,7 @@ import { atom, useAtom, PrimitiveAtom, useSetAtom, useAtomValue, createStore, Pr
 import { CatchError, convertCssToObject, escapeLogStrings, ExposedTyped, InstantTyped } from './UIutils';
 import { ReactTyped, Typed } from "react-typed";
 
-import { PassageElement, CustomPassage, RenderCustomPassage } from '../Story/storyElement';
+import { PassageElement, CustomPassage, RenderCustomPassage } from '../Story/storyElements';
 import { StoryState } from '../Story/storyState';
 
 /**Entry of the log*/
