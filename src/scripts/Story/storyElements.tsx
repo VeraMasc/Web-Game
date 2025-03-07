@@ -1,6 +1,7 @@
 import React from "react"
-import { StoryState } from './storyState';
+import { StoryState } from './StoryState';
 import {ReactTyped} from 'react-typed'
+import { state } from 'melonjs';
 
 /** Defines and describes all the possible elements in a story function
  * @module
@@ -54,7 +55,7 @@ export abstract class CustomPassage{
      * @param ref Ref needed by {@link ReactTyped}
      */
     renderEntry(state:StoryState, ref?:React.RefObject<any>) {
-        React.useEffect(this.onRender.bind(this),[]);
+        React.useEffect(this.onRender.bind(this,state),[]);
         return <span ref={ref}>{this.renderPassage(state)}</span>
     }
 
@@ -64,7 +65,7 @@ export abstract class CustomPassage{
     }
 
     /**What else to do when the element is rendered */
-    onRender(){
+    onRender(state:StoryState){
     
     }
 }

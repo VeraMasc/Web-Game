@@ -1,10 +1,10 @@
 import { Controller } from '../controller';
-import { StoryArray, PassageElement, CustomPassage } from './storyElements';
+import { StoryArray, PassageElement, CustomPassage } from './StoryElements';
 import { LogEntry } from '../UI/LogEntry';
 import {renderToString} from "react-dom/server"
 
 
-/**Keeps track of the story state within the play iterator */
+/**Keeps track of the story state within the play iterator and identifies a specific execution instance of the story*/
 export class StoryState{
     /**Current position within the section */
     index:number=-1;

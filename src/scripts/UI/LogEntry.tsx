@@ -4,11 +4,11 @@ import { renderToString } from 'react-dom/server';
 import { atom, useAtom, PrimitiveAtom, useSetAtom, useAtomValue, createStore, Provider, getDefaultStore, Atom } from 'jotai';
 import { CatchError, convertCssToObject, escapeLogStrings, ExposedTyped, InstantTyped } from './UIutils';
 import { ReactTyped, Typed } from "react-typed";
+import { PassageElement, CustomPassage, RenderCustomPassage } from '../Story/StoryElements';
+import { StoryState } from '../Story/StoryState';
+import {PassageLog} from "./PassageLog"
 
-import { PassageElement, CustomPassage, RenderCustomPassage } from '../Story/storyElements';
-import { StoryState } from '../Story/storyState';
-
-/**Entry of the log*/
+/**Entry of the {@link PassageLog}*/
 export class LogEntry {
     
     /**
@@ -75,11 +75,11 @@ export class LogEntry {
 /**Renders a LogEntry from a memoized atom */
 export var LogMemoComponent= memo(function({logAtom}:{logAtom:Atom<LogEntry>}){
     let [value] = useAtom(logAtom); 
-    return <LogComponent log={value}/>
+    return <RenderLogEntry log={value}/>
 })
 
 /**Renders a LogEntry in react */
-function LogComponent({log}:{log:LogEntry}){
+function RenderLogEntry({log}:{log:LogEntry}){
     if(log==null)
         return;
     

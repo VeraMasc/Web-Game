@@ -1,11 +1,11 @@
 import { createRoot } from 'react-dom/client';
-import { EventLog } from './UI/eventLog';
+import { PassageLog } from './UI/PassageLog';
 import React from 'react';
 import { World } from './World/world';
 import { RenderWorld } from './UI/woldMap';
 import { BaseScreen } from './UI/UI';
 import { getDefaultStore } from 'jotai';
-import { Story } from './Story/story';
+import { Story } from './Story/Story';
 import { testStory } from './Story/Text/testText';
 
 
@@ -19,7 +19,7 @@ export class Controller{
     private static _instance:Controller=null;
 
     /**Gets the event log */
-    get log() {return EventLog.instance;}
+    get log() {return PassageLog.instance;}
 
     /**Retrieves the default jotai store. Use only for debugging */
     get defaultStore(){return getDefaultStore()}
@@ -48,7 +48,7 @@ export class Controller{
         setTimeout(() => {
             //story.section();
             window['play'] = story.play(testStory())
-            EventLog.instance.playing = window['play'];
+            PassageLog.instance.playing = window['play'];
         },200);
         
         // //Create action menu

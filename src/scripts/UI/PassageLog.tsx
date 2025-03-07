@@ -4,21 +4,21 @@ import { selectAtom, splitAtom } from 'jotai/utils';
 import { atom, useAtom, PrimitiveAtom, useSetAtom, useAtomValue, createStore, Provider, getDefaultStore, Atom } from 'jotai';
 import { CatchError, convertCssToObject, escapeLogStrings, ExposedTyped } from './UIutils';
 import { ReactTyped, Typed } from "react-typed";
-import { RenderEventDialogue,EventDialogue } from "./eventOptions";
-import { PassageElement, CustomPassage } from '../Story/storyElements';
+import { RenderEventDialog,EventDialog } from "./EventDialog";
+import { PassageElement, CustomPassage } from '../Story/StoryElements';
 import { LogEntry,LogMemoComponent } from "./LogEntry";
-import { StoryState } from "../Story/storyState";
+import { StoryState } from "../Story/StoryState";
 
 const defaultStore = getDefaultStore()
 
-/**Handles the log history of events */
-export class EventLog extends React.Component {
+/**Acts like a history/display of all rendered story passages*/
+export class PassageLog extends React.Component {
     /**Singleton pattern */
-    static get instance():EventLog{
-        return EventLog._instance 
+    static get instance():PassageLog{
+        return PassageLog._instance 
     };
 
-    private static _instance:EventLog=null;
+    private static _instance:PassageLog=null;
 
 
     /**List of all the entries*/
@@ -32,13 +32,13 @@ export class EventLog extends React.Component {
     /**Story iterator for the story currently playing */
     playing:Generator<StoryState, void, unknown>=null;
 
-    activeEvent:EventDialogue= new EventDialogue();
+    activeEvent:EventDialog= new EventDialog();
 
     
     constructor(props={}){
         super(props)
         
-        return (EventLog._instance ??=this);
+        return (PassageLog._instance ??=this);
     }
 
 
@@ -92,7 +92,7 @@ export class EventLog extends React.Component {
     toHtml= ()=> <CatchError>
             <div id="fullLog" tabIndex={0} onKeyDown={this.nextPassageEvent.bind(this)}>
                 <div id="eventLogList"><RenderLogsList list={this.splitEntries}/></div>
-                <RenderEventDialogue event={this.activeEvent}/>
+                <RenderEventDialog event={this.activeEvent}/>
             </div>
         </CatchError>            
 

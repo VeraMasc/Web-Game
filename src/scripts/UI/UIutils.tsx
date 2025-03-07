@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ReactTyped, Typed, ReactTypedProps } from 'react-typed';
-import { EventLog } from './eventLog';
+import { PassageLog } from './PassageLog';
 
 /**Catches react errors */
 export class CatchError extends React.Component {
@@ -28,7 +28,7 @@ export class CatchError extends React.Component {
     }
 }
 
-/**Removes all control charactes from the {@link EventLog} text*/
+/**Removes all control charactes from the {@link PassageLog} text*/
 export function escapeLogStrings(text:string|null){
     if(text==null)
         return null

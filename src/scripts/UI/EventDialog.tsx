@@ -1,17 +1,23 @@
 import { useEffect } from "react";
 import { CatchError } from "./UIutils";
-import { EventLog } from './eventLog';
-import { CustomPassage } from "../Story/storyElements";
-import { StoryState } from '../Story/storyState';
-import { EventPassage } from '../Story/storyEvents';
+import { PassageLog } from './PassageLog';
+import { CustomPassage } from "../Story/StoryElements";
+import { StoryState } from '../Story/StoryState';
+import { EventPassage } from '../Story/StoryEvents';
 import React from "react";
-import { atom, PrimitiveAtom, useAtomValue } from "jotai";
+import { atom, getDefaultStore, PrimitiveAtom, useAtomValue } from "jotai";
 
 /**Controls the data ivolved in the events that the player interacts with */
-export class EventDialogue {
+export class EventDialog {
     //TODO: Better event type
     value= atom(null as EventPassage)
     storyState?:StoryState;
+
+    setActiveEvent(event:EventPassage,state:StoryState){
+        let store = getDefaultStore();
+        store.set(PassageLog.instance.activeEvent.value,event);
+        this.storyState = state;
+    }
 
     renderEvent(){
         let event = useAtomValue(this.value)
@@ -22,11 +28,11 @@ export class EventDialogue {
 
 
 /**React component to render the player choices */
-export function RenderEventDialogue({event}:{event:EventDialogue}){
+export function RenderEventDialog({event}:{event:EventDialog}){
     //TODO: Add way to move optionselection
     //TODO: Add actual option rendering
     useEffect(()=>console.warn("Options"),[]);
-    return <div id="eventDialogue">
+    return <div id="eventDialog">
                 <CatchError>
                     {event.renderEvent()}
                 </CatchError>    

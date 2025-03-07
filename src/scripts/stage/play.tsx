@@ -1,5 +1,5 @@
 import { Stage, game, ColorLayer, BitmapText  } from "melonjs";
-import { EventLog } from "../UI/eventLog";
+import { PassageLog } from "../UI/PassageLog";
 import {createRoot} from "react-dom/client"
 import { Controller } from "../controller";
 import React from "react";
