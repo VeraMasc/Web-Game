@@ -13,3 +13,9 @@ table.retroTable{
         border-width: 0.15em !important;
     }
 }
+
+//Distinguishes the input from the player from other text
+.playerInput{
+    color:gray;
+    --content-color:unset!important;
+}

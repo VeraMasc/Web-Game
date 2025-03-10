@@ -8,7 +8,8 @@ import { Choice } from '../StoryEvents';
 export var testStory = ()=>[
     // "This is a test story",
     // "[Blue:]{color:dodgerblue;} Title test", //Title test
-    // `[]Skip title test`,
+    // "[Blue:]{color:dodgerblue;} Not blue", //Color test
+    // `[]{--content-color:dodgerblue;}Skip title test (in blue)`,
     // `[\\]Escaped title chars[] Text starts here`, //Escape title test
     // `[Rare char test]{color:goldenrod;} ö à ñ`,
     // `[Html test:] ${renderToString(<><i>italic</i> <hr/> hr <b>bold</b> <br/> newline <small>small</small></>)}`,
@@ -33,7 +34,8 @@ export var testStory = ()=>[
     // </div>)}`,
     "[Choice tests:] Starting",
     new Choice("Option 1", "Option 2"),
-    "You should not be able to read this"
+    '[]{--content-color:red;}You should not be able to read this',
+    
 ] as StoryArray
 
 

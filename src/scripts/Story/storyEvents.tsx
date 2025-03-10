@@ -10,16 +10,24 @@ import { PassageLog } from '../UI/PassageLog';
 import { Story } from './Story';
 import { atom, getDefaultStore } from 'jotai';
 import { state } from 'melonjs';
+import { LogEntry } from '../UI/LogEntry';
 
 /**Groups all the passages that have to display stuff in the EventDialogue */
 export class EventPassage extends CustomPassage{
 
+
+    renderEntry(state:StoryState, ref?:React.RefObject<any>) {
+        //Make all events automatically set themselves as active when rendered
+        state.setActiveEvent(this); 
+        return super.renderEntry(state,ref);
+    }
+
     /**Renders the UI of the event that the User interacts with*/
     renderDialogue(state:StoryState){
         return <ul>
-            <RenderChoiceButton state={state} text="Test option 1"/>
-            <RenderChoiceButton state={state} text="Test option 2" isBlocked/>
-            <RenderChoiceButton state={state} text="Loooooooooooooooooong Test option 3"/>
+            <RenderChoiceButton state={state} text="Test option 1" parent={this}/>
+            <RenderChoiceButton state={state} text="Test option 2" isBlocked parent={this}/>
+            <RenderChoiceButton state={state} text="Loooooooooooooooooong Test option 3" parent={this}/>
         </ul>
     }
 
@@ -29,11 +37,16 @@ export class EventPassage extends CustomPassage{
         PassageLog.instance.activeEvent.setActiveEvent(this,state)
 
     }
+
+    /**Ends the event with a result value. Returns false if event already closed*/
+    closeEvent(state:StoryState, result:any){
+
+    }
 }
 
 /**Presents the Player a choice */
 export class Choice extends EventPassage{
-    //TODO: allow options to accept conditional or complex options
+    //TODO: Better options type to allow options to accept conditional or complex options
     /**The options to display to the player */
     options:string[]=[]
 
@@ -50,7 +63,9 @@ export class Choice extends EventPassage{
 
     renderDialogue(state:StoryState){
         return <ul>
-            {this.options.map((choice,i)=><RenderChoiceButton state={state} text={choice} />)}
+            {this.options.map(
+                (choice,i)=><RenderChoiceButton state={state} text={choice} parent={this} />
+            )}
         </ul>
     }
     
@@ -64,12 +79,14 @@ type ChoiceButtonProps = {
     /**Indicates the option appears but can't be chosen */
     isBlocked?:boolean
     /**Needed for the button to interact with the story */
-    state:StoryState
+    state:StoryState,
+    /**Event that the button is an option for */
+    parent:EventPassage
 } 
 
 /**React component to render the each choice */
-function RenderChoiceButton({text, isBlocked, state, ...props}:ChoiceButtonProps){
-    let cls = "optionChoice";
+function RenderChoiceButton({text, isBlocked, state, parent, ...props}:ChoiceButtonProps){
+    let cls = "choiceButton";
     if(isBlocked)
         cls += " blockedChoice"
     return <li className={cls} tabIndex={0} onClick={isBlocked?null:onClickFunction(state)}>{text}</li>
@@ -80,7 +97,10 @@ function RenderChoiceButton({text, isBlocked, state, ...props}:ChoiceButtonProps
 */
 function onClickFunction(state:StoryState){
     return (ev: React.MouseEvent<HTMLElement>)=>{
-        PassageLog.instance.addRaw("Option pressed!")
+        if(!state.awaitingAction || state.activeEvent!=this)//prevent double or wrong calls
+            return;
+        PassageLog.instance.add(new LogEntry(ev.currentTarget.innerHTML,">").withClass("playerInput"))
+        
         state.awaitingAction=false;
     }
 }

@@ -2,6 +2,7 @@ import { Controller } from '../controller';
 import { StoryArray, PassageElement, CustomPassage } from './StoryElements';
 import { LogEntry } from '../UI/LogEntry';
 import {renderToString} from "react-dom/server"
+import { EventPassage } from './StoryEvents';
 
 
 /**Keeps track of the story state within the play iterator and identifies a specific execution instance of the story*/
@@ -15,11 +16,16 @@ export class StoryState{
     /**Stored return of the current section function*/
     stack:BranchLocation[]=[];
     
-    /**Indicates that the story is paused and waiting for something to happen */
+    /**Indicates that the story is paused and waiting for something to happen in {@link activeEvent} */
     awaitingAction:boolean;
 
+    /**Current story event that's executing (if any). Set with*/
+    get activeEvent():EventPassage{
+        return this._activeEvent;
+    }
+    private _activeEvent:EventPassage=null;
+
     /**
-     * 
      * @param section Story section to play if any
      */
     constructor(section:StoryArray=null){
@@ -52,6 +58,12 @@ export class StoryState{
         }
         console.warn("End of section reached")
         return null; //TODO: Exit passage nesting
+    }
+
+    /**Sets the currently active event and waits for it to resolve (if not null)*/
+    setActiveEvent(event:EventPassage){
+        this._activeEvent=event;
+        this.awaitingAction= event!=null;
     }
 
 }

@@ -9,12 +9,12 @@ import { atom, getDefaultStore, PrimitiveAtom, useAtomValue } from "jotai";
 
 /**Controls the data ivolved in the events that the player interacts with */
 export class EventDialog {
-    //TODO: Better event type
     value= atom(null as EventPassage)
     storyState?:StoryState;
 
     setActiveEvent(event:EventPassage,state:StoryState){
         let store = getDefaultStore();
+        //TODO: move active event to story
         store.set(PassageLog.instance.activeEvent.value,event);
         this.storyState = state;
     }

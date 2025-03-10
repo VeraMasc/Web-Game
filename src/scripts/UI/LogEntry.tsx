@@ -10,19 +10,34 @@ import {PassageLog} from "./PassageLog"
 
 /**Entry of the {@link PassageLog}*/
 export class LogEntry {
-    
+    /**Css class to use for the output */
+    useClass:string;
     /**
-     * @param content Text of the entry
+     * @param content Main body of the entry
      * @param title Title of the entry (describes the type of entry)
      * @param titleStyle Css style to insert onto the title
      */
-    constructor(public content:string|JSX.Element, public title:string="", public titleStyle:string=""){
+    constructor(public content:string|JSX.Element, public title:string|JSX.Element="", public titleStyle:string=""){
         
     }
 
     toString():string {
         let isString=typeof this.content === "string";
         return `${isString? this.content : renderToString(this.content)}`;
+    }
+
+    /**Creates a clone of the entry */
+    clone(){
+        let clone= new LogEntry(null)
+        Object.assign(clone,this)
+        return clone;
+    }
+    
+    /**Sets the entry to use the specified css class */
+    withClass(className:string):LogEntry{
+        let clone = this.clone();
+        clone.useClass = className;
+        return clone;
     }
 
     /**Parses/converts a passage into a log entry */
@@ -60,8 +75,8 @@ export class LogEntry {
             content = content.slice(match[0]?.length ?? 0)
 
             //Try to get the title style
-            let style = match[1] && content.match(LogEntry.styleRegEx)
-            if(style){
+            let style = match && content.match(LogEntry.styleRegEx)
+            if(style?.[1]){
                 titleStyle = style[1];
                 content = content.slice(style[0]?.length ?? 0)
             }
@@ -84,28 +99,38 @@ function RenderLogEntry({log}:{log:LogEntry}){
         return;
     
     let titleEl = null;
-    if(log.title?.length>0) {//Has title
-        let style = {}
-        try{
-            style=convertCssToObject(log.titleStyle??"")
-        }catch(err){
-            console.error(`Failed to parse LogEntry style: "${log.titleStyle}"`)
+    
+    if(log.title) {//Has title
+       
+        //Render according to type (html string or JSX)
+        if(typeof log.title ==="string"){
+            titleEl= <span className="LogTitle"  dangerouslySetInnerHTML={{__html:log.title}}></span>;
+        }else{
+            titleEl= <span className="LogTitle" >{log.title}</span>;
         }
-
-        titleEl= <span className="LogTitle" style={style}  dangerouslySetInnerHTML={{__html:log.title}}></span>;
+        
     }
+
 
     //TODO: Add option to acutocontinue after a message is finished
     //Passage content
     let contentEl:JSX.Element;
     if(typeof log.content === "string"){ //Typed string
-        contentEl = <ReactTyped strings={[log.content]} cursorChar="▌" typeSpeed={20} onBegin={onLogTypingBegin} ></ReactTyped>
+        contentEl = <ReactTyped className="LogContent" strings={[log.content]} cursorChar="▌" typeSpeed={20} onBegin={onLogTypingBegin} ></ReactTyped>
     } else{ //Instantly render passage
-        contentEl = <InstantTyped children={log.content}  cursorChar="▌" onBegin={onLogTypingBegin} ></InstantTyped>
+        contentEl = <InstantTyped className="LogContent" children={log.content}  cursorChar="▌" onBegin={onLogTypingBegin} ></InstantTyped>
+    }
+
+    //Set style
+    let style = null
+    try{
+        style=convertCssToObject(log.titleStyle??"")
+    }catch(err){
+        console.error(`Failed to parse LogEntry style: "${log.titleStyle}"`)
     }
                 
     return <CatchError>
-        <div className="LogEntry" >
+        <div className={`LogEntry ${log.useClass??""}`} style={style}  >
             {titleEl}
             <CatchError>{contentEl}</CatchError>
         </div>

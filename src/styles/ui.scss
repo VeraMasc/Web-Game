@@ -1,5 +1,7 @@
 //Styling for all ui elements
 
+//TODO: Change css class naming conventions
+
 //Contains the canvas and menu elements
 #screenContainer{
     display: flex;
@@ -67,10 +69,18 @@
         margin-top:0.8em;
         margin-bottom: 0;
         max-width: 100%;
+        
+        --content-color: var(--text-base-color);
         >.LogTitle{
             font-size: 1em;
             font-weight: 600;
             margin-right: 0.5em;
+        }
+        >.LogContent{
+            color:var(--content-color, inherit);
+            >.typed-cursor{
+                color:var(--cursor-color, inherit);
+            }
         }
         &:not(:last-child){
             .typed-cursor{
@@ -93,6 +103,10 @@
     padding: 0.3em 0.5em;
     margin-bottom: 1em;
     margin-left: 0.2em;
+    //TODO: Add minimum height to dialog
+    &:empty{
+        min-height: 2em;
+    }
     >ul{
         padding-left: 0.5em;
         list-style-type: none;
@@ -100,7 +114,7 @@
 }
 
 //Log choices
-.optionChoice{
+.choiceButton{
     position: relative;
     //Text
     font-size: 0.85em;
