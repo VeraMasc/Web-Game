@@ -1,4 +1,4 @@
-import React, {useState,JSX, Children, memo} from "react"
+import React, {useState,JSX, Children, memo, createRef} from "react"
 import { renderToString } from 'react-dom/server';
 import { selectAtom, splitAtom } from 'jotai/utils';
 import { atom, useAtom, PrimitiveAtom, useSetAtom, useAtomValue, createStore, Provider, getDefaultStore, Atom } from 'jotai';
@@ -20,6 +20,9 @@ export class PassageLog extends React.Component {
 
     private static _instance:PassageLog=null;
 
+    /**Ref to the PassageLog element in dom */
+    ref=createRef<HTMLDivElement>()
+
 
     /**List of all the entries*/
     entries:PrimitiveAtom<LogEntry[]> = atom([]);
@@ -32,7 +35,7 @@ export class PassageLog extends React.Component {
     /**Story iterator for the story currently playing */
     playing:Generator<StoryState, void, unknown>=null;
 
-    activeEvent:EventDialog= new EventDialog();
+    dialog:EventDialog= new EventDialog();
 
     
     constructor(props={}){
@@ -83,16 +86,13 @@ export class PassageLog extends React.Component {
         })
     }
 
-    render() {
-        return this.toHtml();
-    }
 
     
     
-    toHtml= ()=> <CatchError>
-            <div id="fullLog" tabIndex={0} onKeyDown={this.nextPassageEvent.bind(this)}>
+    render= ()=> <CatchError>
+            <div id="fullLog" ref={this.ref} tabIndex={0} onKeyDown={this.nextPassageEvent.bind(this)}>
                 <div id="eventLogList"><RenderLogsList list={this.splitEntries}/></div>
-                <RenderEventDialog event={this.activeEvent}/>
+                <RenderEventDialog event={this.dialog}/>
             </div>
         </CatchError>            
 

@@ -16,12 +16,6 @@ import { LogEntry } from '../UI/LogEntry';
 export class EventPassage extends CustomPassage{
 
 
-    renderEntry(state:StoryState, ref?:React.RefObject<any>) {
-        //Make all events automatically set themselves as active when rendered
-        state.setActiveEvent(this); 
-        return super.renderEntry(state,ref);
-    }
-
     /**Renders the UI of the event that the User interacts with*/
     renderDialogue(state:StoryState){
         return <ul>
@@ -34,7 +28,7 @@ export class EventPassage extends CustomPassage{
     /**Displays event options when the passage is rendered */
     onRender(state:StoryState){
         console.log(this);
-        PassageLog.instance.activeEvent.setActiveEvent(this,state)
+        PassageLog.instance.dialog.setActiveEvent(this,state)
 
     }
 
@@ -89,18 +83,21 @@ function RenderChoiceButton({text, isBlocked, state, parent, ...props}:ChoiceBut
     let cls = "choiceButton";
     if(isBlocked)
         cls += " blockedChoice"
-    return <li className={cls} tabIndex={0} onClick={isBlocked?null:onClickFunction(state)}>{text}</li>
+    return <li className={cls} tabIndex={0} onClick={isBlocked?null:onClickFunction(state,parent)}>{text}</li>
 }
 
 /**Handles the user clicking an Event Option
  * @param state story state to interact with when the player clicks
+ * @param source event that created the optionButton
 */
-function onClickFunction(state:StoryState){
+function onClickFunction(state:StoryState,source:EventPassage){
     return (ev: React.MouseEvent<HTMLElement>)=>{
-        if(!state.awaitingAction || state.activeEvent!=this)//prevent double or wrong calls
+        if(!state.awaitingAction || state.activeEvent!=source)//prevent double or wrong calls
             return;
-        PassageLog.instance.add(new LogEntry(ev.currentTarget.innerHTML,">").withClass("playerInput"))
         
-        state.awaitingAction=false;
+        PassageLog.instance.add(new LogEntry(ev.currentTarget.innerHTML,">").withClass("playerInput"))
+        state.setActiveEvent(null);
+        //Recover focus after event option is removed
+        PassageLog.instance.ref?.current?.focus()
     }
 }

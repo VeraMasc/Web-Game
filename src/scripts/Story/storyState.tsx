@@ -3,10 +3,14 @@ import { StoryArray, PassageElement, CustomPassage } from './StoryElements';
 import { LogEntry } from '../UI/LogEntry';
 import {renderToString} from "react-dom/server"
 import { EventPassage } from './StoryEvents';
+import { atom, PrimitiveAtom,getDefaultStore } from 'jotai';
+
 
 
 /**Keeps track of the story state within the play iterator and identifies a specific execution instance of the story*/
 export class StoryState{
+    /**Stores an atom of itself for centralized use */
+    selfAtom=atom(this);
     /**Current position within the section */
     index:number=-1;
 
@@ -21,9 +25,10 @@ export class StoryState{
 
     /**Current story event that's executing (if any). Set with*/
     get activeEvent():EventPassage{
-        return this._activeEvent;
+        return getDefaultStore().get(this.activeEventAtom);
     }
-    private _activeEvent:EventPassage=null;
+    /**Atom that stores {@link activeEvent} */
+    activeEventAtom:PrimitiveAtom<EventPassage>=atom(null as EventPassage);
 
     /**
      * @param section Story section to play if any
@@ -62,7 +67,7 @@ export class StoryState{
 
     /**Sets the currently active event and waits for it to resolve (if not null)*/
     setActiveEvent(event:EventPassage){
-        this._activeEvent=event;
+        getDefaultStore().set(this.activeEventAtom,event);
         this.awaitingAction= event!=null;
     }
 

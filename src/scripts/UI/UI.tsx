@@ -8,6 +8,6 @@ export function BaseScreen(){
     let log = new PassageLog();
     //<menu.toHTML/>
     return [
-    <log.toHtml/>]
+    <log.render/>]
    
 }
