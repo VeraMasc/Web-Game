@@ -4,6 +4,7 @@ import { LogEntry } from '../UI/LogEntry';
 import {renderToString} from "react-dom/server"
 import { EventPassage } from './StoryEvents';
 import { atom, PrimitiveAtom,getDefaultStore } from 'jotai';
+import { StoryData } from './StoryData';
 
 
 
@@ -22,6 +23,9 @@ export class StoryState{
     
     /**Indicates that the story is paused and waiting for something to happen in {@link activeEvent} */
     awaitingAction:boolean;
+
+    /**Stores all the variables used in the story for conditional executions  */
+    data:StoryData=new StoryData();
 
     /**Current story event that's executing (if any). Set with*/
     get activeEvent():EventPassage{
@@ -75,3 +79,4 @@ export class StoryState{
 
 /**References a specific point in a story branch */
 export type BranchLocation = {branch:StoryArray, index:number}
+

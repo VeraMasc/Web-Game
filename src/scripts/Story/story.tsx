@@ -41,6 +41,11 @@ export class Story{
             yield state;
         }while(passage)
         
+        //Yield state forever once the end is reached
+        //Allows to see state once finished
+        while(true){
+            yield state;
+        }
     }
 
     /**Prints a portion of dialogue and awaits keypress from user */

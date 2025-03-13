@@ -49,6 +49,8 @@ export class Controller{
             //story.section();
             window['play'] = story.play(testStory())
             PassageLog.instance.playing = window['play'];
+            PassageLog.instance.playing.next();
+            PassageLog.instance.focusElement();
         },200);
         
         // //Create action menu

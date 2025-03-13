@@ -57,6 +57,7 @@ export class PassageLog extends React.Component {
 
     /**Adds the next passage in the current story ({@link playing}) */
     addNext(){
+        //TODO: Move to controller?
         this.playing.next();
     }
 
@@ -101,6 +102,10 @@ export class PassageLog extends React.Component {
             this.addNext()
         }
 
+    }
+    /**Sets focus on the dom element */
+    focusElement(){
+        PassageLog.instance.ref?.current?.focus()
     }
 }
 

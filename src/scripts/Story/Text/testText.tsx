@@ -1,6 +1,7 @@
 import { renderToString } from 'react-dom/server';
-import { StoryArray, TaggedArray, Tag } from '../StoryElements';
-import { Choice } from '../StoryEvents';
+import { StoryArray } from '../StoryElements';
+import { TaggedArray, Tag } from "../FlowElements/FlowTags";
+import { Choice } from "../Events/ChoiceEvent";
 
 
 
