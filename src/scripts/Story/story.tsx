@@ -21,26 +21,30 @@ export class Story{
     *play(section:StoryArray){
         
         let state = new StoryState(section);
-        do{
-            //Await for user action
-            while(state.awaitingAction){
-                yield state;
-            }
-            var passage = state.nextPassage();
-            if(passage == null)
-                break;
+        do{     //Stack loop
+            do{     //Branch loop
+                //Await for user action
+                while(state.awaitingAction){
+                    yield state;
+                }
+                var passage = state.nextPassage();
+                if(passage == null)
+                    break;
 
-            if(typeof passage === "string" || passage instanceof CustomPassage){
-                let entry = LogEntry.fromPassage(passage,state);
-                Story.print(entry)
+                if(typeof passage === "string" || passage instanceof CustomPassage){
+                    let entry = LogEntry.fromPassage(passage,state);
+                    Story.print(entry)
+                
+                }else {
+                    console.error(`Can't print invalid passage of type ${(passage as Object)?.constructor?.name}`)
+                }
+                
+                yield state;
+            }while(passage)
             
-            }else {
-                console.error(`Can't print invalid passage of type ${(passage as Object)?.constructor?.name}`)
-            }
-            
-            yield state;
-        }while(passage)
+        }while(state.branchReturn())
         
+        console.warn("Story Finished:",state)
         //Yield state forever once the end is reached
         //Allows to see state once finished
         while(true){

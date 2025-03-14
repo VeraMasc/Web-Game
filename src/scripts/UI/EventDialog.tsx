@@ -37,7 +37,7 @@ export class EventDialog {
     renderEvent(){
         let event = useAtomValue(this.stateEventAtom)
         console.warn("Rendering dialogue")
-        return event?.renderDialogue(this.storyState)
+        return event?.renderDialog(this.storyState)
     }
 }
 

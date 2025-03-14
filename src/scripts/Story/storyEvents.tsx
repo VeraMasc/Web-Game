@@ -16,17 +16,14 @@ export class EventPassage extends CustomPassage{
 
 
     /**Renders the UI of the event that the User interacts with*/
-    renderDialogue(state:StoryState){
-        return <ul>
-            <RenderChoiceButton state={state} text="Test option 1" parent={this}/>
-            <RenderChoiceButton state={state} text="Test option 2" isBlocked parent={this}/>
-            <RenderChoiceButton state={state} text="Loooooooooooooooooong Test option 3" parent={this}/>
-        </ul>
+    renderDialog(state:StoryState){
+        return <div>
+            <span><b>Forgot to override renderDialogue in "{this.constructor.name}"</b></span>
+        </div>
     }
 
     /**Displays event options when the passage is rendered */
     onRender(state:StoryState){
-        console.log(this);
         PassageLog.instance.dialog.setActiveEvent(this,state)
 
     }

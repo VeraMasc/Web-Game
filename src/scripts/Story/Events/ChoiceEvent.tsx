@@ -1,47 +1,102 @@
 import React, { JSX } from "react";
 import { LogEntry } from "../../UI/LogEntry";
 import { PassageLog } from "../../UI/PassageLog";
-import { EventPassage } from "../StoryEvents";
+import { EventPassage, EventResult } from "../StoryEvents";
 import { StoryState } from "../StoryState";
+import { StoryArray } from '../StoryElements';
 
 
 /**Presents the Player a choice */
 export class Choice extends EventPassage {
-    //TODO: Better options type to allow options to accept conditional or complex options
     //TODO: Unique identifiers for options
     /**The options to display to the player */
-    options: string[] = [];
-
-    constructor(...options: string[]) {
+    options: OptionConfig[];
+    /**@param passage Log Passage that prompts the question */
+    constructor(public passage?:string|JSX.Element,...options: (string|OptionConfig)[]) {
         super();
-        this.options = options;
+        this.options = options.map(o => Choice.getOptionConfig(o));
     }
 
     renderPassage(state: StoryState): JSX.Element {
-        state.awaitingAction = true;
-        console.warn(state);
-        return <span>Custom</span>;
+        state.awaitingAction = this.options.length>0;//Don't block if no options
+        return <span>{this.passage}</span>;
     }
 
-    renderDialogue(state: StoryState) {
+    renderDialog(state: StoryState) {
         return <ul>
             {this.options.map(
-                (choice, i) => <RenderChoiceButton key={i} data-value={i} state={state} text={choice} parent={this} />
+                (option, i) => {
+
+                return <RenderChoiceButton key={i} data-value={i} state={state} option={option} parent={this} />}
             )}
         </ul>;
     }
 
     onRender(state: StoryState): void {
-        super.onRender(state);
+        if(this.options.length==0)
+            return; //Don't block if no options
+        super.onRender(state); 
         PassageLog.instance.focusElement();
     }
+
+    /**Converts an option value into the {@link OptionConfig} format*/
+    static getOptionConfig(value:string|OptionConfig){
+        if(typeof value === 'string'){
+            value = {text:value}
+        }
+        return value;
+    }
+    /**Clones the choice */
+    clone(this:Choice):Choice{
+        let clone = new Choice();
+        clone.options = this.options;
+        return clone;
+    }
+    
+    /**Adds an option to the choice and allows chaining
+     * @param text text of the option
+     * @param config Other parameters of the config
+    */
+    add(text:string, config:TextlessConfig={}):Choice{
+        (config as OptionConfig).text=text;
+        this.options.push(config as OptionConfig)
+        return this;
+    }
+
+    /**Sets the default branch of the choice (replaces unset choice branches) */
+    thenDefault(branch:StoryArray):Choice{
+        this.options.forEach(op=>op.branch ??=branch)
+        return this;
+    }
+    
+    closeEvent(state:StoryState, result:number){
+        let ret = super.closeEvent(state,result)
+        let chosen = this.options[result];
+        if(chosen?.branch){
+            state.branchCall(chosen.branch)
+        }
+        return ret;
+    }
 }
+
+/**Defines how the options of a {@link Choice} are stored*/
+export type OptionConfig = {
+    /**Text of the choice */
+    text:string,
+    /**Condition for the choice to be selectable (or false to always lock it)*/
+    condition?:((s:StoryState)=>boolean)|boolean,
+    /**Branch to jump to if any */
+    branch?:StoryArray
+}
+
+/**{@link OptionConfig} without {@link OptionConfig.text}*/
+export type TextlessConfig = Omit<OptionConfig,"text">;
+
+
 /**Props accepted by the option choice component {@link RenderChoiceButton} */
 type ChoiceButtonProps = {
-    /**Text of the option */
-    text?: string;
-    /**Indicates the option appears but can't be chosen */
-    isBlocked?: boolean;
+    /**Settings for the option button to render */
+    option:OptionConfig
     /**Needed for the button to interact with the story */
     state: StoryState;
     /**Event that the button is an option for */
@@ -50,7 +105,14 @@ type ChoiceButtonProps = {
     "data-value"?:number;
 };
 /**React component to render the each choice */
-export function RenderChoiceButton({ text, isBlocked, state, parent, ...props }: ChoiceButtonProps) {
+export function RenderChoiceButton({ option,  state, parent, ...props }: ChoiceButtonProps) {
+    let {text, condition} = option;
+
+    /**Uses the value of condition as isBlocked or its result if its a function */
+    let isBlocked:boolean = condition ==false
+        || (condition instanceof Function && !(condition(state)));
+    
+    //Get class
     let cls = "choiceButton";
     if (isBlocked)
         cls += " blockedChoice";

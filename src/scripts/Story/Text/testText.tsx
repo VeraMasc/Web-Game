@@ -2,6 +2,7 @@ import { renderToString } from 'react-dom/server';
 import { StoryArray } from '../StoryElements';
 import { TaggedArray, Tag } from "../FlowElements/FlowTags";
 import { Choice } from "../Events/ChoiceEvent";
+import { JumpTo } from '../FlowElements/FlowControl';
 
 
 
@@ -34,7 +35,14 @@ export var testStory = ()=>[
     // </table> 
     // </div>)}`,
     "[Choice tests:] Starting",
-    new Choice("Option 1", "Option 2"),
+    new Choice("Prompt",
+        "Normal Option")
+        .add("Never blocked (restart)",{ condition:true, branch:[new JumpTo(testStory)]})
+        .add("window.testCond==true?",{condition:()=>window['testCond']})
+        .add("blocked",{ condition:false})
+        .thenDefault(["Option chosen (no restart)"])        
+    ,
+    new Choice(),
     '[]{--content-color:red;}You should not be able to read this',
     
 ] as StoryArray

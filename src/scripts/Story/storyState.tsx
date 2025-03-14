@@ -50,6 +50,35 @@ export class StoryState{
             //Save current position
             this.stack.push({branch: this.activeBranch, index: this.index })
         }
+        this.branchSet(branch, start);
+    }
+
+    /**Returns to where it was called if possible.*/
+    branchReturn():boolean{
+        if(!this.stack.length)
+            return false;
+        let {branch,index} = this.stack.pop();
+        if((branch??index)!=null){
+            this.branchSet(branch,index)
+            return true;
+        }
+        return false;
+    }
+
+    /**Moves to a branch position (won't return once finished) 
+     * @param branch Branch to execute
+     * @param start indext to start from (if any)
+    */
+    branchJump(branch:StoryArray, start?:number){
+        this.stack.length=0;
+        this.branchSet(branch,start)
+    }
+
+    /**Moves to a branch position without changing the stack (DANGEROUS)
+     * @param branch Branch to execute
+     * @param start indext to start from (if any)
+    */
+    private branchSet(branch:StoryArray, start?:number){
         this.activeBranch = branch;
         this.index= start??-1;
     }

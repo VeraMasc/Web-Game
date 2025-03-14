@@ -13,7 +13,7 @@ export type { TaggedArray } from "./FlowElements/FlowTags";
 
 
 /**Every possible type of element found in a story array */
-export type StoryElement = string | JumpTo | Tag;
+export type StoryElement = string | ExecElement | Tag;
 
 /**Every possible type of {@link StoryElement} that is not a control element
  * and has to be rendered when reached
@@ -25,6 +25,12 @@ export type StoryArray = StoryElement[]
 
 /**Lambda function that generates a part of the story on demand */
 export type StoryFunction= ()=>StoryArray
+
+
+/**Encompasses all story elements that execute without rendering*/
+export class ExecElement{
+    
+}
 
 /**Parent class of all non string {@link PassageElement}*/
 export abstract class CustomPassage{
