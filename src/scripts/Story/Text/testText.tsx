@@ -34,6 +34,13 @@ export var testStory = ()=>[
     //     </tr>
     // </table> 
     // </div>)}`,
+    new Choice("Test Choices?","No")
+        .add("Yes",{branch:testChoices}),
+    '[]{--content-color:red;}You should not be able to read this',
+    
+] as StoryArray
+
+var testChoices = ()=>[
     "[Choice tests:] Starting",
     new Choice("Prompt",
         "Normal Option")
@@ -42,9 +49,8 @@ export var testStory = ()=>[
         .add("blocked",{ condition:false})
         .thenDefault(["Option chosen (no restart)"])        
     ,
+    "Next choice is empty:",
     new Choice(),
-    '[]{--content-color:red;}You should not be able to read this',
-    
 ] as StoryArray
 
 

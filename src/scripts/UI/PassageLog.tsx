@@ -4,7 +4,7 @@ import { selectAtom, splitAtom } from 'jotai/utils';
 import { atom, useAtom, PrimitiveAtom, useSetAtom, useAtomValue, createStore, Provider, getDefaultStore, Atom } from 'jotai';
 import { CatchError, convertCssToObject, escapeLogStrings, ExposedTyped } from './UIutils';
 import { ReactTyped, Typed } from "react-typed";
-import { RenderEventDialog,EventDialog } from "./EventDialog";
+import { RenderEventDialog,EventDialogUI } from "./EventDialogUi";
 import { PassageElement, CustomPassage } from '../Story/StoryElements';
 import { LogEntry,LogMemoComponent } from "./LogEntry";
 import { StoryState } from "../Story/StoryState";
@@ -35,7 +35,7 @@ export class PassageLog extends React.Component {
     /**Story iterator for the story currently playing */
     playing:Generator<StoryState, void, unknown>=null;
 
-    dialog:EventDialog= new EventDialog();
+    dialog:EventDialogUI= new EventDialogUI();
 
     
     constructor(props={}){
@@ -91,14 +91,17 @@ export class PassageLog extends React.Component {
     
     
     render= ()=> <CatchError>
-            <div id="fullLog" ref={this.ref} tabIndex={0} onKeyDown={this.nextPassageEvent.bind(this)}>
+            <div id="fullLog" ref={this.ref} tabIndex={0} onKeyDown={this.nextPassageEvent.bind(this)} onDoubleClick={this.nextPassageEvent.bind(this)}>
                 <div id="eventLogList"><RenderLogsList list={this.splitEntries}/></div>
                 <RenderEventDialog event={this.dialog}/>
             </div>
         </CatchError>            
 
-    nextPassageEvent(ev:KeyboardEvent){
-        if ([" ", "Enter"].includes(ev.key)){
+    nextPassageEvent(ev:KeyboardEvent|MouseEvent){
+        //TODO: Refactor next passage keybind function
+        if ("key" in ev && [" ", "Enter"].includes(ev.key)){
+            this.addNext()
+        }else if(ev.type ==='dblclick'){
             this.addNext()
         }
 

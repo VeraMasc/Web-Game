@@ -1,5 +1,5 @@
 import { Controller } from '../controller';
-import { StoryArray, PassageElement, CustomPassage } from './StoryElements';
+import { StoryArray, PassageElement, CustomPassage, ExecElement } from './StoryElements';
 import { LogEntry } from '../UI/LogEntry';
 import {renderToString} from "react-dom/server"
 import { EventPassage } from './StoryEvents';
@@ -85,17 +85,21 @@ export class StoryState{
 
     /**Retrieves the next passage in the section */
     nextPassage():PassageElement{
-        while((this.index += 1) < this.activeBranch.length){
-            //Check if its a passage element
-            let passage = this.activeBranch[this.index];
-            if(typeof passage === "string" || passage instanceof CustomPassage)
-                return passage;
+        do{//Stack loop
+            while((this.index += 1) < this.activeBranch.length){
+                //Check if its a passage element
+                let element = this.activeBranch[this.index];
+                if(typeof element === "string" || element instanceof CustomPassage)
+                    return element;
 
-            //If not a passage, Try next element
-            //TODO: If no passage, pop call stack
-        }
+                if(element instanceof ExecElement) //Exec Elements
+                    element.execute(this);
+                //*If not a passage, Try next element
+            }
+        }while(this.branchReturn())
+            
         console.warn("End of section reached")
-        return null; //TODO: Exit passage nesting
+        return null;
     }
 
     /**Sets the currently active event and waits for it to resolve (if not null)*/

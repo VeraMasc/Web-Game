@@ -3,6 +3,7 @@ import { StoryArray, PassageElement, CustomPassage } from './StoryElements';
 import { LogEntry } from '../UI/LogEntry';
 import {renderToString} from "react-dom/server"
 import { StoryState } from './StoryState';
+import { state } from 'melonjs';
 
 /**It handles all the story progression and logic */
 export class Story{
@@ -21,34 +22,38 @@ export class Story{
     *play(section:StoryArray){
         
         let state = new StoryState(section);
-        do{     //Stack loop
-            do{     //Branch loop
-                //Await for user action
-                while(state.awaitingAction){
-                    yield state;
-                }
-                var passage = state.nextPassage();
-                if(passage == null)
-                    break;
-
-                if(typeof passage === "string" || passage instanceof CustomPassage){
-                    let entry = LogEntry.fromPassage(passage,state);
-                    Story.print(entry)
-                
-                }else {
-                    console.error(`Can't print invalid passage of type ${(passage as Object)?.constructor?.name}`)
-                }
-                
-                yield state;
-            }while(passage)
-            
-        }while(state.branchReturn())
         
+        do{     //Branch loop
+            //Await for user action
+            while(state.awaitingAction){
+                yield state;
+            }
+            var passage = state.nextPassage();
+            if(passage == null)
+                break;
+
+            Story.playPassage(passage,state)
+            
+            yield state;
+        }while(passage)
+            
+
         console.warn("Story Finished:",state)
         //Yield state forever once the end is reached
         //Allows to see state once finished
         while(true){
             yield state;
+        }
+    }
+
+    /**Processes the current passage of the {@link play} loop */
+    private static playPassage(passage:PassageElement,state:StoryState){
+        if(typeof passage === "string" || passage instanceof CustomPassage){
+            let entry = LogEntry.fromPassage(passage,state);
+            Story.print(entry)
+        
+        }else {
+            console.error(`Can't print invalid passage of type ${(passage as Object)?.constructor?.name}`)
         }
     }
 

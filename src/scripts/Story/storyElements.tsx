@@ -28,8 +28,11 @@ export type StoryFunction= ()=>StoryArray
 
 
 /**Encompasses all story elements that execute without rendering*/
-export class ExecElement{
-    
+export abstract class ExecElement{
+    /**Function to execute when the story passes through this element */
+    execute(state:StoryState){
+
+    }
 }
 
 /**Parent class of all non string {@link PassageElement}*/

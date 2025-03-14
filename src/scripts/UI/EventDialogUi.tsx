@@ -9,7 +9,7 @@ import { atom, getDefaultStore, PrimitiveAtom, useAtomValue } from "jotai";
 import { selectAtom } from "jotai/utils";
 
 /**Controls the data ivolved in the events that the player interacts with */
-export class EventDialog {
+export class EventDialogUI {
     /**Describes the current state of the story that the dialog is representing */
     get storyState(){
         //TODO: maybe move the state handling to Story?
@@ -43,7 +43,7 @@ export class EventDialog {
 
 
 /**React component to render the player choices */
-export function RenderEventDialog({event}:{event:EventDialog}){
+export function RenderEventDialog({event}:{event:EventDialogUI}){
     //TODO: Add way to move optionselection
     //TODO: Add actual option rendering
     useEffect(()=>console.warn("Options"),[]);
