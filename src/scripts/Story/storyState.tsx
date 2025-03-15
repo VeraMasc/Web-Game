@@ -1,10 +1,11 @@
 import { Controller } from '../controller';
-import { StoryArray, PassageElement, CustomPassage, ExecElement } from './StoryElements';
+import { StoryArray, PassageElement, CustomPassage, ExecElement, StoryElement, NonPassageElement } from './StoryElements';
 import { LogEntry } from '../UI/LogEntry';
 import {renderToString} from "react-dom/server"
 import { EventPassage } from './StoryEvents';
 import { atom, PrimitiveAtom,getDefaultStore } from 'jotai';
 import { StoryData } from './StoryData';
+import { Story } from './Story';
 
 
 
@@ -46,6 +47,7 @@ export class StoryState{
      * @param start indext to start from (if any)
     */
     branchCall(branch:StoryArray, start?:number){
+        //TODO: Unify calls the storyFunctions and FunctionArrays
         if(this.activeBranch !=null){
             //Save current position
             this.stack.push({branch: this.activeBranch, index: this.index })
@@ -70,6 +72,7 @@ export class StoryState{
      * @param start indext to start from (if any)
     */
     branchJump(branch:StoryArray, start?:number){
+        //TODO: Unify calls the storyFunctions and FunctionArrays
         this.stack.length=0;
         this.branchSet(branch,start)
     }
@@ -83,23 +86,34 @@ export class StoryState{
         this.index= start??-1;
     }
 
-    /**Retrieves the next passage in the section */
+    /**Retrieves the next passage in the section and executes all elements in the path */
     nextPassage():PassageElement{
         do{//Stack loop
-            while((this.index += 1) < this.activeBranch.length){
-                //Check if its a passage element
+            while((this.index += 1) < this.activeBranch.length){ //Iterate until passage is found
                 let element = this.activeBranch[this.index];
-                if(typeof element === "string" || element instanceof CustomPassage)
+                
+                if(Story.isPassageEl(element)) 
                     return element;
-
-                if(element instanceof ExecElement) //Exec Elements
-                    element.execute(this);
-                //*If not a passage, Try next element
+                this.executeStoryEl(element)
             }
         }while(this.branchReturn())
             
         console.warn("End of section reached")
         return null;
+    }
+
+    /**Executes a {@link NonPassageElement} if possible*/
+    private executeStoryEl(element:NonPassageElement){
+        if(element instanceof ExecElement){ //Executable Elements
+            element.execute(this);
+        }else{
+            //Branch types or other
+            if(element instanceof Function) element=element() //Extract Branch from function
+            
+            if(element instanceof Array){ //Branch array
+                this.branchCall(element)
+            } 
+        }
     }
 
     /**Sets the currently active event and waits for it to resolve (if not null)*/

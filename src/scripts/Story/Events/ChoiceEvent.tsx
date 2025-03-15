@@ -4,6 +4,7 @@ import { PassageLog } from "../../UI/PassageLog";
 import { EventPassage, EventResult } from "../StoryEvents";
 import { StoryState } from "../StoryState";
 import { StoryArray, StoryFunction } from '../StoryElements';
+import { FlowTo } from '../FlowElements/FlowControl';
 
 
 /**Presents the Player a choice */
@@ -76,8 +77,11 @@ export class Choice extends EventPassage {
         //TODO: Unify calls the storyFunctions and FunctionArrays
         let branchArray = chosen.branch instanceof Function?
                 chosen.branch()
-                :chosen.branch;
-        if(chosen?.branch){
+                :chosen?.branch;
+        if(branchArray instanceof FlowTo){
+            branchArray.execute(state)
+        }
+        else if(branchArray){
             state.branchCall(branchArray)
         }
         return ret;
@@ -91,7 +95,7 @@ export type OptionConfig = {
     /**Condition for the choice to be selectable (or false to always lock it)*/
     condition?:((s:StoryState)=>boolean)|boolean,
     /**Branch to jump to if any */
-    branch?:StoryArray|StoryFunction
+    branch?:StoryArray|StoryFunction|FlowTo
 }
 
 /**{@link OptionConfig} without {@link OptionConfig.text}*/

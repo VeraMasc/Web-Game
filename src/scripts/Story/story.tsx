@@ -1,5 +1,5 @@
 import { Controller } from '../controller';
-import { StoryArray, PassageElement, CustomPassage } from './StoryElements';
+import { StoryArray, PassageElement, CustomPassage, StoryElement } from './StoryElements';
 import { LogEntry } from '../UI/LogEntry';
 import {renderToString} from "react-dom/server"
 import { StoryState } from './StoryState';
@@ -48,7 +48,7 @@ export class Story{
 
     /**Processes the current passage of the {@link play} loop */
     private static playPassage(passage:PassageElement,state:StoryState){
-        if(typeof passage === "string" || passage instanceof CustomPassage){
+        if(Story.isPassageEl(passage)){
             let entry = LogEntry.fromPassage(passage,state);
             Story.print(entry)
         
@@ -72,4 +72,9 @@ export class Story{
      * @deprecated
     */
     static parseTest = (str:string)=>LogEntry.parse(str)
+
+    /**Returns if a {@link StoryElement} is {@link PassageElement} */
+    static isPassageEl(element:StoryElement):element is PassageElement{
+        return typeof element === "string" || element instanceof CustomPassage;
+    }
 }

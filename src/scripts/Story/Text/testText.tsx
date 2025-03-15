@@ -1,8 +1,8 @@
 import { renderToString } from 'react-dom/server';
-import { StoryArray } from '../StoryElements';
+import { StoryArray, StoryFunction } from '../StoryElements';
 import { TaggedArray, Tag } from "../FlowElements/FlowTags";
 import { Choice } from "../Events/ChoiceEvent";
-import { JumpTo } from '../FlowElements/FlowControl';
+import { JumpTo, CallTo } from '../FlowElements/FlowControl';
 
 
 
@@ -36,6 +36,8 @@ export var testStory = ()=>[
     // </div>)}`,
     new Choice("Test Choices?","No")
         .add("Yes",{branch:testChoices}),
+    new Choice("Test Branching?","No")
+        .add("Yes",{branch:testBranching}),
     '[]{--content-color:red;}You should not be able to read this',
     
 ] as StoryArray
@@ -51,8 +53,19 @@ var testChoices = ()=>[
     ,
     "Next choice is empty:",
     new Choice(),
-] as StoryArray
+]
 
+
+var testBranching:StoryFunction= ()=>[
+    "[Branch tests:] Starting",
+    ["Simple branch array","Branch ends"],
+    [new Tag('testTag'), "Tagged branch starts here...", "...and ends here"],
+    new Choice("Test tagged branch?")
+        .add("Yes",{branch:new CallTo(null,'testTag')})
+        .add("No")
+    ,
+    "[Branch tests:] End",
+]
 
 export var placeHolder = ()=>[
     "This is a test",

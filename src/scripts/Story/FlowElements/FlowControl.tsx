@@ -1,27 +1,41 @@
-import { ExecElement, StoryFunction } from "../StoryElements";
+import { ExecElement, StoryFunction, StoryArray } from '../StoryElements';
 import { StoryState } from '../StoryState';
-import { Tag } from "./FlowTags";
+import { Tag, TagId } from './FlowTags';
 
+/**Possible targets for a {@FlowTo} element. (string)*/
+export type FlowTarget = TagId | number 
 
-
-/**Story goto. Jumps to another portion of the story */
-export class JumpTo extends ExecElement {
+/**Encompasses any {@link ExecElement} that changes the flow of the story*/
+export abstract class FlowTo extends ExecElement{
     /**
      * @param fragment Story function to jumpt to. Null for current
-     * @param tag *Tag within {@link fragment} to jump to (if any)
+     * @param target *Tag within {@link fragment} to jump to (if any)
      */
-    constructor(public fragment: StoryFunction, public tag: string = null) {
+    constructor(public fragment: StoryFunction, public target: FlowTarget = null) {
         super();
     }
 
+    static getTargetIndex( branch:StoryArray, target: FlowTarget):number{
+        if(typeof target === 'string'){
+            return Tag.findTag(branch,target)
+        }
+        return -1;
+    }
+}
+
+/**Story goto. Jumps to another portion of the story */
+export class JumpTo extends FlowTo {
+    
+
     execute(state: StoryState): void {
-        JumpTo.exec(state,this.fragment,this.tag);
+        JumpTo.exec(state,this.fragment,this.target);
     }
 
     /**Executes the effect of {@link JumpTo} */
-    static exec(state:StoryState,fragment: StoryFunction, tag?: string){
+    static exec(state:StoryState,fragment: StoryFunction, target?: FlowTarget){
         let branch = fragment?.() ?? state.activeBranch;
-        let index:number=Tag.findTag(branch,tag);
+        let index:number= FlowTo.getTargetIndex(branch, target)
+        
 
         state.branchJump(branch,index)
         
@@ -30,23 +44,16 @@ export class JumpTo extends ExecElement {
 
 
 /**Story function call. Jumps to another portion of the story */
-export class CallTo extends ExecElement {
-    /**
-     * @param fragment Story function to jumpt to. Null for current
-     * @param tag *Tag within {@link fragment} to jump to (if any)
-     */
-    constructor(public fragment: StoryFunction, public tag: string = null) {
-        super();
-    }
+export class CallTo extends FlowTo {
 
     execute(state: StoryState): void {
-        JumpTo.exec(state,this.fragment,this.tag);
+        JumpTo.exec(state,this.fragment,this.target);
     }
 
     /**Executes the effect of {@link JumpTo} */
-    static exec(state:StoryState,fragment: StoryFunction, tag?: string){
+    static exec(state:StoryState,fragment: StoryFunction, target?: FlowTarget){
         let branch = fragment?.() ?? state.activeBranch;
-        let index:number=Tag.findTag(branch,tag);
+        let index:number=FlowTo.getTargetIndex(branch, target);
 
         state.branchCall(branch,index)
     }

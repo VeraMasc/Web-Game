@@ -3,7 +3,7 @@ import { StoryState } from './StoryState';
 import {ReactTyped} from 'react-typed'
 import { state } from 'melonjs';
 import { JumpTo } from "./FlowElements/FlowControl";
-import { Tag } from "./FlowElements/FlowTags";
+import { Tag, TaggedArray } from './FlowElements/FlowTags';
 export type { TaggedArray } from "./FlowElements/FlowTags";
 
 
@@ -13,12 +13,19 @@ export type { TaggedArray } from "./FlowElements/FlowTags";
 
 
 /**Every possible type of element found in a story array */
-export type StoryElement = string | ExecElement | Tag;
+export type StoryElement = PassageElement | ExecElement | BranchElement | Tag;
+
 
 /**Every possible type of {@link StoryElement} that is not a control element
  * and has to be rendered when reached
 */
 export type PassageElement = string | CustomPassage;
+
+/** {@link StoryElement|StoryElements} that aren't {@link PassageElement|PassageElements}*/
+export type NonPassageElement = Exclude<StoryElement,PassageElement>;
+
+/**Story elements that generate a branch*/
+export type BranchElement = StoryFunction | TaggedArray | StoryArray;
 
 /**Sequence of story elements to play in order*/
 export type StoryArray = StoryElement[]
