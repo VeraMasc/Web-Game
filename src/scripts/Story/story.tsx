@@ -1,5 +1,5 @@
 import { Controller } from '../controller';
-import { StoryArray, PassageElement, CustomPassage, StoryElement } from './StoryElements';
+import { StoryArray, PassageElement, CustomPassage, StoryElement, StoryFunction, BranchElement } from './StoryElements';
 import { LogEntry } from '../UI/LogEntry';
 import {renderToString} from "react-dom/server"
 import { StoryState } from './StoryState';
@@ -76,5 +76,10 @@ export class Story{
     /**Returns if a {@link StoryElement} is {@link PassageElement} */
     static isPassageEl(element:StoryElement):element is PassageElement{
         return typeof element === "string" || element instanceof CustomPassage;
+    }
+
+    /**Extracts a {@link StoryArray} from a {@link BranchElement} */
+    static extractBranch(source:BranchElement):StoryArray{
+        return typeof source === 'function' ? source() : source;
     }
 }

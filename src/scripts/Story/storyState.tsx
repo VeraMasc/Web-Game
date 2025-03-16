@@ -1,5 +1,5 @@
 import { Controller } from '../controller';
-import { StoryArray, PassageElement, CustomPassage, ExecElement, StoryElement, NonPassageElement } from './StoryElements';
+import { StoryArray, PassageElement, CustomPassage, ExecElement, StoryElement, NonPassageElement, StoryFunction, BranchElement } from './StoryElements';
 import { LogEntry } from '../UI/LogEntry';
 import {renderToString} from "react-dom/server"
 import { EventPassage } from './StoryEvents';
@@ -46,8 +46,8 @@ export class StoryState{
      * @param branch Branch to execute
      * @param start indext to start from (if any)
     */
-    branchCall(branch:StoryArray, start?:number){
-        //TODO: Unify calls the storyFunctions and FunctionArrays
+    branchCall(branch:BranchElement, start?:number){
+        branch = Story.extractBranch(branch);
         if(this.activeBranch !=null){
             //Save current position
             this.stack.push({branch: this.activeBranch, index: this.index })
@@ -71,8 +71,8 @@ export class StoryState{
      * @param branch Branch to execute
      * @param start indext to start from (if any)
     */
-    branchJump(branch:StoryArray, start?:number){
-        //TODO: Unify calls the storyFunctions and FunctionArrays
+    branchJump(branch:BranchElement, start?:number){
+        branch = Story.extractBranch(branch);
         this.stack.length=0;
         this.branchSet(branch,start)
     }
@@ -81,7 +81,8 @@ export class StoryState{
      * @param branch Branch to execute
      * @param start indext to start from (if any)
     */
-    private branchSet(branch:StoryArray, start?:number){
+    private branchSet(branch:BranchElement, start?:number){
+        branch = Story.extractBranch(branch);
         this.activeBranch = branch;
         this.index= start??-1;
     }
@@ -107,10 +108,8 @@ export class StoryState{
         if(element instanceof ExecElement){ //Executable Elements
             element.execute(this);
         }else{
-            //Branch types or other
-            if(element instanceof Function) element=element() //Extract Branch from function
-            
-            if(element instanceof Array){ //Branch array
+            //Branch Element
+            if(Array.isArray(element) || typeof element === 'function'){ //Branch array
                 this.branchCall(element)
             } 
         }

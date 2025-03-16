@@ -35,10 +35,8 @@ export class JumpTo extends FlowTo {
     static exec(state:StoryState,fragment: StoryFunction, target?: FlowTarget){
         let branch = fragment?.() ?? state.activeBranch;
         let index:number= FlowTo.getTargetIndex(branch, target)
-        
-
+    
         state.branchJump(branch,index)
-        
     }
 }
 
@@ -47,10 +45,10 @@ export class JumpTo extends FlowTo {
 export class CallTo extends FlowTo {
 
     execute(state: StoryState): void {
-        JumpTo.exec(state,this.fragment,this.target);
+        CallTo.exec(state,this.fragment,this.target);
     }
 
-    /**Executes the effect of {@link JumpTo} */
+    /**Executes the effect of {@link CallTo} */
     static exec(state:StoryState,fragment: StoryFunction, target?: FlowTarget){
         let branch = fragment?.() ?? state.activeBranch;
         let index:number=FlowTo.getTargetIndex(branch, target);

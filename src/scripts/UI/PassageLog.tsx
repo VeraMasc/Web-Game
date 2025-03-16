@@ -8,6 +8,7 @@ import { RenderEventDialog,EventDialogUI } from "./EventDialogUi";
 import { PassageElement, CustomPassage } from '../Story/StoryElements';
 import { LogEntry,LogMemoComponent } from "./LogEntry";
 import { StoryState } from "../Story/StoryState";
+import { EventQuery as EventChain, filterEventKeys } from "./Inputs";
 
 const defaultStore = getDefaultStore()
 
@@ -90,22 +91,26 @@ export class PassageLog extends React.Component {
 
     
     
-    render= ()=> <CatchError>
-            <div id="fullLog" ref={this.ref} tabIndex={0} onKeyDown={this.nextPassageEvent.bind(this)} onDoubleClick={this.nextPassageEvent.bind(this)}>
+    render= ()=>{
+
+        let onKeyDown = new EventChain(filterEventKeys as any)
+            .add([" ", "Enter"],this.addNext.bind(this))
+            .add(["ArrowUp","ArrowDown"], console.log)
+        ;
+        let events = {
+            onKeyDown: onKeyDown.asCallback(),//filterEventKeys([" ", "Enter"], this.addNext.bind(this)),
+            onDoubleClick: this.addNext.bind(this)
+        }
+        console.log(onKeyDown)
+        return <CatchError>
+            <div id="fullLog" ref={this.ref} tabIndex={0} {...events}>
                 <div id="eventLogList"><RenderLogsList list={this.splitEntries}/></div>
                 <RenderEventDialog event={this.dialog}/>
             </div>
-        </CatchError>            
+        </CatchError>
+    }            
 
-    nextPassageEvent(ev:KeyboardEvent|MouseEvent){
-        //TODO: Refactor next passage keybind function
-        if ("key" in ev && [" ", "Enter"].includes(ev.key)){
-            this.addNext()
-        }else if(ev.type ==='dblclick'){
-            this.addNext()
-        }
-
-    }
+   
     /**Sets focus on the dom element */
     focusElement(){
         PassageLog.instance.ref?.current?.focus()

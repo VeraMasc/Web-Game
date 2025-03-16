@@ -135,6 +135,9 @@
         background-color: var(--option-color);
         color: var(--bg-dark-color);    
     }
+    &:focus-visible{
+        outline: none;//Disables manual focus outline
+    }
     &:active{
         background-color:transparent;
         color:var(--option-color);

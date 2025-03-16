@@ -5,6 +5,8 @@ import { EventPassage, EventResult } from "../StoryEvents";
 import { StoryState } from "../StoryState";
 import { StoryArray, StoryFunction } from '../StoryElements';
 import { FlowTo } from '../FlowElements/FlowControl';
+import { useEffect,createRef } from 'react';
+
 
 
 /**Presents the Player a choice */
@@ -72,18 +74,16 @@ export class Choice extends EventPassage {
     
     closeEvent(state:StoryState, result:number){
         let ret = super.closeEvent(state,result)
-        let chosen = this.options[result];
+        let branchArray = this.options[result]?.branch;
 
-        //TODO: Unify calls the storyFunctions and FunctionArrays
-        let branchArray = chosen.branch instanceof Function?
-                chosen.branch()
-                :chosen?.branch;
-        if(branchArray instanceof FlowTo){
-            branchArray.execute(state)
-        }
-        else if(branchArray){
-            state.branchCall(branchArray)
-        }
+        if(branchArray != null){
+            if(branchArray instanceof FlowTo){
+                branchArray.execute(state)
+            }
+            else if(branchArray){
+                state.branchCall(branchArray)
+            }
+        } 
         return ret;
     }
 }
@@ -125,7 +125,17 @@ export function RenderChoiceButton({ option,  state, parent, ...props }: ChoiceB
     let cls = "choiceButton";
     if (isBlocked)
         cls += " blockedChoice";
-    return <li className={cls} tabIndex={0} {...props} onClick={isBlocked ? null : onClickFunction(state, parent)}>{text}</li>;
+    let ref:React.RefObject<HTMLLIElement>;
+    //Focus first
+    if(props['data-value']==0){
+        ref = createRef();
+        useEffect(
+            ()=>{ref?.current.focus?.()}
+        ,[])
+    }
+    //TODO: Add events to choice options
+    //TODO: Find a better way to add events to JSX
+    return <li className={cls} ref={ref} tabIndex={0} {...props} onClick={isBlocked ? null : onClickFunction(state, parent)}>{text}</li>;
 }
 /**Handles the user clicking an Event Option
  * @param state story state to interact with when the player clicks
