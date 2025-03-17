@@ -6,6 +6,7 @@ import { StoryState } from "../StoryState";
 import { StoryArray, StoryFunction } from '../StoryElements';
 import { FlowTo } from '../FlowElements/FlowControl';
 import { useEffect,createRef } from 'react';
+import { filterEventKeys } from "../../UI/UserInputs";
 
 
 
@@ -133,20 +134,32 @@ export function RenderChoiceButton({ option,  state, parent, ...props }: ChoiceB
             ()=>{ref?.current.focus?.()}
         ,[])
     }
+    let optionEvents = {
+        onClick: isBlocked ? null : onConfirmFunction(state, parent),
+        onKeyDown: isBlocked ? null : filterEventKeys([" ","Enter"], onConfirmFunction(state,parent))
+    }
+
     //TODO: Add events to choice options
     //TODO: Find a better way to add events to JSX
-    return <li className={cls} ref={ref} tabIndex={0} {...props} onClick={isBlocked ? null : onClickFunction(state, parent)}>{text}</li>;
+    return <li className={cls} ref={ref} tabIndex={0} {...props} {...optionEvents}>{text}</li>;
 }
-/**Handles the user clicking an Event Option
+
+
+
+/**Handles the user Confirming an Event Option
  * @param state story state to interact with when the player clicks
  * @param source event that created the optionButton
 */
-function onClickFunction(state: StoryState, source: EventPassage) {
-    return (ev: React.MouseEvent<HTMLElement>) => {
-        if (!state.awaitingAction || state.activeEvent != source) //prevent double or wrong calls
+function onConfirmFunction(state: StoryState, source: EventPassage) {
+    return (ev: React.UIEvent<HTMLElement>) => {
+        //prevent double or wrong calls
+        ev.stopPropagation()
+        if (!state.awaitingAction || state.activeEvent != source) 
             return;
-
-        PassageLog.instance.add(new LogEntry(ev.currentTarget.innerHTML, ">").withClass("playerInput"));
+        //Print player choice
+        PassageLog.instance.add(new LogEntry(ev.currentTarget.innerHTML, ">")
+            .withClass("playerInput"));
+        //Result
         let result = Number.parseInt(ev.currentTarget.getAttribute("data-value"));
         if(isNaN(result))
             result=null;

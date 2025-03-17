@@ -45,7 +45,6 @@ export class EventDialogUI {
 /**React component to render the player choices */
 export function RenderEventDialog({event}:{event:EventDialogUI}){
     //TODO: Add way to move optionselection
-    //TODO: Add actual option rendering
     useEffect(()=>console.warn("Options"),[]);
     return <div id="eventDialog">
                 <CatchError>

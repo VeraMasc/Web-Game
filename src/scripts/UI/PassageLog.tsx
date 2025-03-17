@@ -8,7 +8,7 @@ import { RenderEventDialog,EventDialogUI } from "./EventDialogUi";
 import { PassageElement, CustomPassage } from '../Story/StoryElements';
 import { LogEntry,LogMemoComponent } from "./LogEntry";
 import { StoryState } from "../Story/StoryState";
-import { EventQuery as EventChain, filterEventKeys } from "./Inputs";
+import { EventQuery as EventChain, filterEventKeys } from "./UserInputs";
 
 const defaultStore = getDefaultStore()
 
@@ -95,7 +95,7 @@ export class PassageLog extends React.Component {
 
         let onKeyDown = new EventChain(filterEventKeys as any)
             .add([" ", "Enter"],this.addNext.bind(this))
-            .add(["ArrowUp","ArrowDown"], console.log)
+            .add(["ArrowUp","ArrowDown","W","S"], moveSelection)
         ;
         let events = {
             onKeyDown: onKeyDown.asCallback(),//filterEventKeys([" ", "Enter"], this.addNext.bind(this)),
@@ -122,5 +122,24 @@ function RenderLogsList({list}:{list:Atom<Atom<LogEntry>[]>}){
     let value = useAtomValue(list);
     //The extra div is necessary for styling reasons. The scrollbar dies otherwise
     return <div>{value.map(v =>  <LogMemoComponent logAtom={v} key={v.toString()} />)}</div>;
+}
+
+//TODO: Implement option selection better
+//? Move option selection to User Inputs?
+function moveSelection(ev:React.KeyboardEvent){
+    //Get movement direction
+    let dir =0;
+    if(["ArrowDown","S"].includes(ev.key))
+        dir = 1;
+    else if(["ArrowUp","W"].includes(ev.key))
+        dir = -1;
+    //Get element
+    let options = [...document.querySelectorAll<HTMLElement>(".choiceButton")];
+    if(options.length==0)
+        return;
+    let index = options.indexOf(document.activeElement as HTMLElement)
+    index = (index + dir + options.length) % options.length
+    options[index].focus()
+
 }
 
